@@ -1,0 +1,15 @@
+#!/usr/bin/expect
+
+set hostname [lindex $argv 0]
+set command [lindex $argv 1]
+
+set timeout 2
+
+spawn ssh root@$hostname $command
+
+expect {
+ "(yes/no)?"            {send "yes\r"; exp_continue}
+ "password:"            {send "modulus\r";}
+}
+expect eof
+

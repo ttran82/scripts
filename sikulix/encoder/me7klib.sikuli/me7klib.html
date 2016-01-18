@@ -1,0 +1,232 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>me7klib.sikuli</h2> <a href="me7klib.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="kw">from</span> sikuli <span class="kw">import</span> *
+<span class="kw">import</span> sys
+<span class="kw">import</span> os
+<span class="kw">import</span> shutil
+
+<span class="cmt">#Common exit status</span>
+<span class="cmt">#0 = Passed, 1 = Failed, 2 = Errored</span>
+program_status = <span class="dig">0</span>
+
+<span class="cmt">#This routine parse all command line argument into environment table</span>
+<span class="kw">def</span> Sikuli_parse_args():
+    <span class="kw">for</span> arg <span class="kw">in</span> sys.argv[<span class="dig">1</span>:]:
+        i = arg.partition(<span class="str">'='</span>)
+        a = i[<span class="dig">0</span>]
+        b = i[<span class="dig">1</span>]
+        c = i[<span class="dig">2</span>]
+        c = c.strip(<span class="str">' '</span>)
+        <span class="kw">if</span> b != <span class="str">'='</span>:
+            <span class="kw">print</span> <span class="str">"User enter invalid arguments: "</span> + arg
+            exit(<span class="dig">1</span>)
+        <span class="kw">if</span> c == <span class="str">''</span>:
+            <span class="kw">print</span> <span class="str">"User enter invalid arguments: "</span> + arg
+            exit(<span class="dig">1</span>)
+        os.putenv(a, c)
+
+Sikuli_parse_args()
+
+<span class="cmt">#Get formated current time</span>
+<span class="kw">def</span> Get_time():
+    <span class="kw">from</span> time <span class="kw">import</span> gmtime, strftime
+    mytime = strftime(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)
+    <span class="kw">return</span> mytime
+
+<span class="cmt">#Get formated current time</span>
+<span class="kw">def</span> Get_time_string():
+    <span class="kw">from</span> time <span class="kw">import</span> gmtime, strftime
+    mytime = strftime(<span class="str">"%Y%m%d_%H%M%S"</span>)
+    <span class="kw">return</span> mytime
+
+<span class="cmt">#Run command with options to print out debugging logs</span>
+<span class="kw">def</span> Run_cmd(cmd):
+    Print_text(<span class="str">'--&gt; '</span> + cmd)
+    return_status = run(cmd)
+    Print_debug(<span class="str">'Return status: '</span> + str(return_status))
+    <span class="kw">return</span> return_status
+
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Print_env():
+    <span class="kw">for</span> key <span class="kw">in</span> os.environ.keys():
+        Print_text(key + <span class="str">' = '</span> + os.getenv(key))
+
+<span class="cmt">#Check for missing arguments.  Exit(1) if it is not found.</span>
+<span class="kw">def</span> Check_arg(arg):
+    <span class="kw">if</span> <span class="kw">not</span> os.getenv(arg):
+        Print_text(arg + <span class="str">' is missing.'</span>)
+        exit(<span class="dig">2</span>)
+    <span class="kw">else</span>:
+        Print_debug(arg + <span class="str">' = '</span> + str(os.getenv(arg)))
+
+<span class="cmt">#Print with leading timestamp information</span>
+<span class="kw">def</span> Print_text(text):
+    current_time = Get_time()
+    <span class="kw">print</span> current_time + <span class="str">' : '</span> + text
+
+<span class="cmt">#Print with leading timestamp information only if verbosity is greater than 1</span>
+
+<span class="kw">def</span> Print_debug(text):
+    current_time = Get_time()
+    <span class="kw">if</span> os.getenv(<span class="str">'verbosity'</span>):
+        <span class="kw">if</span> int(os.getenv(<span class="str">'verbosity'</span>)) &gt; <span class="dig">1</span>:
+            <span class="kw">print</span> current_time + <span class="str">' : '</span> + text
+
+<span class="cmt">#Set an argument into environment variable</span>
+<span class="kw">def</span> Set_arg(myarg, myvalue):
+    os.putenv(myarg, myvalue)
+    Print_debug(<span class="str">'Setting argument: '</span> + str(myarg) + <span class="str">' = '</span> + str(myvalue))
+
+<span class="kw">def</span> Get_arg(myarg):
+    mystatus = os.getenv(myarg)
+    Print_debug(<span class="str">'Getting argument: '</span> + str(myarg) + <span class="str">' = '</span> + str(mystatus))
+    <span class="kw">return</span> mystatus
+
+<span class="kw">def</span> Set_default_arg(myarg, myvalue):
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(myarg):
+        Set_arg(myarg, myvalue)
+        Print_debug(myarg + <span class="str">' is not given.  Use default value: '</span> + myvalue)
+
+<span class="kw">def</span> Capture_screen_old():
+    my_capfile = <span class="skw">capture</span>(<span class="dig">0</span>,<span class="dig">0</span>,<span class="dig">1920</span>,<span class="dig">1080</span>)
+    my_errorname = <span class="str">'capture_'</span> + Get_time_string() + <span class="str">'.png'</span>
+    <span class="kw">if</span> Get_arg(<span class="str">'kleverCurrentDir'</span>):
+        my_currentdir = Get_arg(<span class="str">'kleverCurrentDir'</span>)
+    <span class="kw">else</span>:
+        my_currentdir = os.getcwd()
+    my_targetname = my_currentdir + <span class="str">'\\'</span> + my_errorname
+    shutil.move(my_capfile, my_targetname)
+    Print_text(<span class="str">'Screen captured: '</span> + my_targetname)
+
+<span class="kw">def</span> Capture_screen(x=<span class="dig">0</span>,y=<span class="dig">0</span>,w=<span class="dig">1920</span>,h=<span class="dig">1080</span>,tofile=False):
+    my_capfile = <span class="skw">capture</span>(x,y,w,h)
+    <span class="kw">if</span> <span class="kw">not</span> tofile:
+        my_errorname = <span class="str">'capture_'</span> + Get_time_string() + <span class="str">'.png'</span>
+        my_errorname = os.getcwd() + <span class="str">'\\'</span> + my_errorname
+    <span class="kw">else</span>:
+        my_errorname = tofile
+    shutil.move(my_capfile, my_errorname)
+    Print_text(<span class="str">'Screen captured: '</span> + my_errorname)
+
+<span class="kw">def</span> Exit_capture(exitcode):
+    Capture_screen()
+    exit(exitcode)
+
+<span class="cmt">#Exit program with option to turn on screen capture or not</span>
+<span class="kw">def</span> Exit_program(mytext, exitcode=<span class="dig">1</span>, capturescreen = <span class="dig">0</span>):
+    Print_debug(mytext)
+    <span class="kw">if</span> capturescreen == <span class="dig">1</span>:
+        Exit_capture(exitcode)
+    <span class="kw">else</span>:
+        exit(exitcode)
+
+<span class="cmt">#action = -1 (close), 0 (show), 1 (minimize), 2 (maximize)</span>
+<span class="kw">def</span> Main_gui(action):
+    javaME7000MainTitle = <span class="str">'ME-7000 - '</span> + str(Get_arg(<span class="str">'encIp'</span>)) + <span class="str">' - '</span> + str(Get_arg(<span class="str">'encGuiLogin'</span>))
+    mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000MainTitle + <span class="str">'\" windows_action='</span> + str(action)
+    <span class="kw">return</span> int(Run_cmd(mycmd))
+
+<span class="kw">def</span> Log_gui(action):
+    javaME7000LogTitle = <span class="str">'Log Collector'</span>
+    my_cmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000LogTitle + <span class="str">'\" windows_action='</span> + str(action)
+    <span class="kw">return</span> int(Run_cmd(my_cmd))
+
+<span class="cmt">#Any global varibles</span>
+<span class="kw">if</span> Get_arg(<span class="str">'KleverTestScriptsDir'</span>):
+    sikuliScriptDir = Get_arg(<span class="str">'KleverTestScriptsDir'</span>) + <span class="str">'\\sikuli\\'</span>
+<span class="kw">else</span>:
+    sikuliScriptDir = getParentFolder()
+
+<span class="cmt">#Set environment showSikuli to see sikuli in actions</span>
+<span class="kw">if</span> Get_arg(<span class="str">'showSikuli'</span>):
+    <span class="kw">if</span> Get_arg(<span class="str">'showSikuli'</span>).lower() == <span class="str">'yes'</span>:
+        Print_debug(<span class="str">'Detecting showSikuli to show Sikuli in actions.'</span>)
+        setShowActions(True)
+
+<span class="cmt">#Set to have additional Sikuli debug when setting verbosity =3 or higher</span>
+<span class="kw">if</span> Get_arg(<span class="str">'verbosity'</span>):
+    debugLevel = Get_arg(<span class="str">'verbosity'</span>)
+    <span class="kw">if</span> int(debugLevel) &gt; <span class="dig">1</span>:
+        Debug.on(int(debugLevel))
+
+<span class="kw">def</span> RunSikuli(scriptname, scriptdir=sikuliScriptDir):
+    runScript(scriptdir + scriptname)
+
+<span class="kw">def</span> Launch_winapp(texttosearch, waittime=<span class="dig">2</span>):
+    <span class="skw">type</span>(Key.ESC, KeyModifier.CTRL); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="skw">wait</span>(<img src="search.png" />)
+    <span class="skw">type</span>(texttosearch);<span class="skw">sleep</span>(<span class="dig">1</span>); <span class="skw">type</span>(Key.ENTER)
+    <span class="skw">sleep</span>(waittime)
+</pre>
+</body>
+</html>

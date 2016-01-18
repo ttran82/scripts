@@ -1,0 +1,173 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>groom_sdi_input.sikuli</h2> <a href="groom_sdi_input.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Groom SDI input port number to the very first output mux group</span>
+<span class="cmt">#This routine assume the main gui is alread launch and is currently in Process tab</span>
+<span class="cmt">#inputs: required: boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; programTarget=[Primary (default), Backup1, Backup2]</span>
+<span class="cmt">#inputs: resolution=[720x480p59.94...352x480p59.94]</span>
+<span class="cmt">#Usage: groom_sdi_input.sikuli  boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt;</span>
+<span class="cmt">#Usage: groom_sdi_input.sikuli  boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; programTarget=Backup1 applyChanges=0</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'boardNum'</span>)
+    Check_arg(<span class="str">'sdiPort'</span>)
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'programTarget'</span>):
+        Set_arg(<span class="str">'programTarget'</span>, <span class="str">'Primary'</span>)
+        Print_debug(<span class="str">'programTarget is not defined.  Will use default: Primary.'</span>)
+    Set_default_arg(<span class="str">'applyChanges'</span>, <span class="str">'1'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+Settings.OcrTextSearch=True
+Settings.OcrTextRead=True
+
+<span class="cmt">#Any definitions are here</span>
+my_boardnum = int(Get_arg(<span class="str">'boardNum'</span>))
+<span class="kw">def</span> Nav_Board(boardnum):
+    Main_gui(<span class="dig">2</span>)
+    <span class="skw">find</span>(<img src="Processing_selected.png" />)
+    <span class="cmt">#First reset everything to collapse tree</span>
+    <span class="skw">find</span>(<img src="1437545116814.png" />)
+    <span class="skw">click</span>(Pattern(<img src="1437545116814.png" />).targetOffset(-<span class="dig">1</span>,-<span class="dig">1</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="skw">click</span>(Pattern(<img src="1437545116814.png" />).targetOffset(<span class="dig">21</span>,<span class="dig">1</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="cmt">#clicking on the correct board</span>
+    <span class="kw">if</span> boardnum == <span class="dig">1</span>:
+        <span class="skw">find</span>(<img src="1437467581935.png" />)
+        <span class="skw">click</span>(<img src="1437467581935.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">elif</span> boardnum == <span class="dig">2</span>:
+        <span class="skw">find</span>(<img src="1437467683872.png" />)
+        <span class="skw">click</span>(<img src="1437467683872.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">elif</span> boardnum == <span class="dig">3</span>:
+        <span class="skw">find</span>(<img src="1437467850488.png" />)
+        <span class="skw">click</span>(<img src="1437467850488.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">elif</span> boardnum == <span class="dig">4</span>:
+        <span class="skw">find</span>(<img src="1437467898341.png" />)
+        <span class="skw">click</span>(<img src="1437467898341.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Print_text(<span class="str">'Invalid board range provided outside of (1..4): '</span> + my_boardnum)
+        exit(<span class="dig">1</span>)
+
+my_sdiport = int(Get_arg(<span class="str">'sdiPort'</span>))
+<span class="kw">def</span> Groom_SDI_Port(sdiport):
+    <span class="kw">if</span> sdiport == <span class="dig">1</span>:
+        <span class="skw">find</span>(<img src="1437468655400.png" />); <span class="skw">click</span>(<img src="1437468655400.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="1SDI_selected.png" />).exact().targetOffset(<span class="dig">0</span>,<span class="dig">37</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">2</span>:
+        <span class="skw">find</span>(<img src="1437468623934.png" />); <span class="skw">click</span>(<img src="1437468623934.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="2SDI_selected.png" />).exact().targetOffset(<span class="dig">0</span>,<span class="dig">36</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">3</span>:
+        <span class="skw">find</span>(Pattern(<img src="1437468574569.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="1437468574569.png" />).exact()); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="3SDI_selected.png" />).exact().targetOffset(<span class="dig">0</span>,<span class="dig">36</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">4</span>:
+        <span class="skw">find</span>(Pattern(<img src="1437468708286.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="1437468708286.png" />).exact()); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="4SDI_selected.png" />).exact().targetOffset(<span class="dig">0</span>,<span class="dig">36</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">5</span>:
+        <span class="skw">find</span>(Pattern(<img src="1437468839990.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="1437468839990.png" />).exact()); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="5SDI_selected.png" />).exact().targetOffset(<span class="dig">0</span>,<span class="dig">36</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">6</span>:
+        <span class="skw">find</span>(Pattern(<img src="1437468869433.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="1437468869433.png" />).exact()); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="6SDI_selected.png" />).exact().targetOffset(<span class="dig">0</span>,<span class="dig">37</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">7</span>:
+        <span class="skw">find</span>(Pattern(<img src="1437468893307.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="1437468893307.png" />).exact()); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="1437593359293.png" />).exact().targetOffset(-<span class="dig">7</span>,<span class="dig">36</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">elif</span> sdiport == <span class="dig">8</span>:
+        <span class="skw">find</span>(Pattern(<img src="1437468934637.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="1437468934637.png" />).exact()); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">dragDrop</span>(Pattern(<img src="1437553918782.png" />).exact().targetOffset(-<span class="dig">7</span>,<span class="dig">36</span>), Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">52</span>,<span class="dig">17</span>)); <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="kw">else</span>:
+        Print_text(<span class="str">'Invalid sdi port range provided outside of (1..8): '</span> + my_sdiport)
+
+<span class="kw">def</span> Apply_Changes():
+    myaction = Get_arg(<span class="str">'applyChanges'</span>)
+    <span class="kw">if</span> myaction:
+        <span class="kw">if</span> myaction == <span class="str">'1'</span>:
+            RunSikuli(<span class="str">'apply_groom_changes'</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Nav_Board(my_boardnum)
+Groom_SDI_Port(my_sdiport)
+Apply_Changes()
+</pre>
+</body>
+</html>

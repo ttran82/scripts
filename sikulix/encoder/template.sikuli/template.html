@@ -1,0 +1,131 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>template.sikuli</h2> <a href="template.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run Navigate the Main menu </span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#inputs: encIP=[] encGuiLogin encGuiPassword encLogFile</span>
+<span class="cmt">#Usage: template.sikuli required_arg1=value1 required_arg2=value2 optional_arg3=value2 </span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#If these arguments are not provided, script will terminate with error status</span>
+    Check_arg(<span class="str">'required_arg1'</span>)
+    Check_arg(<span class="str">'required_arg2'</span>)
+
+    <span class="cmt">#Assign default for optional arguments</span>
+    <span class="kw">if</span> <span class="kw">not</span> os.getenv(<span class="str">'optinal_arg3'</span>):
+        Set_arg(<span class="str">'optional_arg3'</span>, <span class="str">'My default value'</span>)
+
+Check_args()
+<span class="cmt">###############################################################</span>
+<span class="cmt">#Main program definitions</span>
+<span class="kw">def</span> my_func():
+    my_var1 = Get_arg(<span class="str">'required_arg1'</span>)
+    my_var2 = Get_arg(<span class="str">'required_arg2'</span>)
+    my_var3 = Get_arg(<span class="str">'optional_arg3'</span>)
+
+    <span class="kw">if</span> my_var1 == my_var2:
+        <span class="cmt">#Print text with timestamp</span>
+        Print_text(<span class="str">'Pass. exit with zero.'</span>)
+        <span class="cmt">#Same as Print_text but only when verbosity = 2 or greater</span>
+        Print_debug(<span class="str">'var1 is equal to var2'</span>)
+        exit(<span class="dig">0</span>)
+    <span class="kw">else</span>:
+        <span class="cmt">#Print text with timestamp</span>
+        Print_text(<span class="str">'Failed.  exit with one.'</span>)
+        <span class="cmt">#Same as Print_text but only when verbosity = 2 or greater</span>
+        Print_debug(<span class="str">'var1 is not equal to var2'</span>)
+        exit(<span class="dig">1</span>)
+
+    <span class="kw">if</span> int(my_var3) &lt; <span class="dig">0</span>:
+        Print_text(<span class="str">'User entered invalid/erroed value.  exit with two.'</span>)
+        <span class="cmt">#Same as Print_text but only when verbosity = 2 or greater</span>
+        Print_debug(<span class="str">'Expecting var3 is a non-negative integer'</span>)
+        exit(<span class="dig">2</span>)
+
+    <span class="cmt">#if you need to run another sikuli script within this script</span>
+    <span class="cmt">#returnCode = runScript(sikuliScriptDir + 'sikuli script name without .sikuli extension')</span>
+    <span class="cmt">#then decide what to do base on the returnCode.</span>
+
+<span class="cmt">################################################################</span>
+<span class="cmt">#Main program flow</span>
+my_func()
+</pre>
+</body>
+</html>

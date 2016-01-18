@@ -1,0 +1,129 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>delete_grooming.sikuli</h2> <a href="delete_grooming.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Delete the primary grooming from ME7000 front-end</span>
+<span class="cmt">#This routine assume the output group is already selected.</span>
+<span class="cmt">#inputs: optional: groomType=[Primary, Backup1, Backup2].  Default will be Primary</span>
+<span class="cmt">#Usage: delete_primary_grooming.sikuli</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for optional arguments</span>
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'groomType'</span>):
+        Set_arg(<span class="str">'groomType'</span>, <span class="str">'Primary'</span>)
+        Print_debug(<span class="str">'groomType is not defined.  Will use Primary as default.'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Delete_Grooming():
+
+    <span class="cmt">#first need to select Output group tabs</span>
+    Set_arg(<span class="str">'tabName'</span>, <span class="str">'Processing'</span>)
+    runScript(sikuliScriptDir + <span class="str">'nav_tabs'</span>)
+
+    <span class="skw">wait</span>(<img src="1437553963025.png" />)
+
+    <span class="cmt">#check if the vertical bar is in correct position</span>
+    <span class="kw">if</span> <span class="kw">not</span> exists(Pattern(<img src="selected_thumbnail.png" />).similar(<span class="dig">0.90</span>)):
+        <span class="skw">click</span>(Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">49</span>,<span class="dig">17</span>)); <span class="skw">rightClick</span>(Pattern(<img src="1437553963025.png" />).targetOffset(-<span class="dig">49</span>,<span class="dig">17</span>)); <span class="skw">wait</span>(Pattern(<img src="DeletePrimary_popup.png" />).similar(<span class="dig">0.90</span>))
+        mygroom = Get_arg(<span class="str">'groomType'</span>)
+        <span class="kw">if</span> mygroom == <span class="str">'Primary'</span>: <span class="skw">click</span>(Pattern(<img src="DeletePrimary_popup.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">16</span>,-<span class="dig">30</span>))
+        <span class="kw">elif</span> mygroom == <span class="str">'Backup1'</span>: <span class="skw">click</span>(Pattern(<img src="DeletePrimary_popup.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">14</span>,-<span class="dig">5</span>))
+        <span class="kw">elif</span> mygroom == <span class="str">'Backup2'</span>: <span class="skw">click</span>(Pattern(<img src="DeletePrimary_popup.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">15</span>,<span class="dig">19</span>))
+        <span class="kw">else</span>: Exit_program(<span class="str">'Invalid port number: '</span> +  myoutput)
+
+        <span class="skw">wait</span>(<img src="Question.png" />); <span class="skw">click</span>(Pattern(<img src="delete_ok_cancel_button.png" />).targetOffset(-<span class="dig">35</span>,-<span class="dig">1</span>)); <span class="skw">wait</span>(Pattern(<img src="delete_cross.png" />).similar(<span class="dig">0.89</span>))
+        RunSikuli(<span class="str">'apply_groom_changes'</span>)
+        <span class="skw">wait</span>(Pattern(<img src="static_pic_from_delete_groom.png" />).similar(<span class="dig">0.90</span>), <span class="dig">10</span>)
+        <span class="kw">if</span> exists(Pattern(<img src="static_pic_from_delete_groom.png" />).similar(<span class="dig">0.90</span>)): Print_debug(<span class="str">'Groom deleted successfully.'</span>)
+        <span class="kw">else</span>: Exit_program(<span class="str">'Groom failed to delete.'</span>)
+    <span class="kw">else</span>:
+        Print_debug(<span class="str">'Selected groom seemed to be inactive.  Does not need to do anything'</span>)
+
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Delete_Grooming()
+</pre>
+</body>
+</html>

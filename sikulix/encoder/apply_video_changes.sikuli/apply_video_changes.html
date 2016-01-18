@@ -1,0 +1,124 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>apply_video_changes.sikuli</h2> <a href="apply_video_changes.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Apply or discard changes</span>
+<span class="cmt">#This routine assume the main screen is on and it's looking for Discard Apply changes</span>
+<span class="cmt">#inputs: changeAction = Apply (default)/Discard</span>
+<span class="cmt">#Usage: apply_changes.sikuli  changeAction=Discard</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'changeAction'</span>):
+        Set_arg(<span class="str">'changeAction'</span>, <span class="str">'Apply'</span>)
+        Print_debug(<span class="str">'changeAction is not defined.  Will use default: Apply.'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Apply_Video_Changes():
+    myaction = Get_arg(<span class="str">'changeAction'</span>)
+    <span class="kw">if</span> myaction == <span class="str">'Apply'</span>:
+        <span class="kw">if</span> exists(<img src="changes_icon-1.png" />) <span class="kw">or</span> exists(<img src="Discard_Apply_buttons.png" />):
+            Print_debug(<span class="str">'There are changes to video page.  Apply needed.'</span>)
+            <span class="skw">find</span>(<img src="Discard_Apply_buttons.png" />)
+            hover(Pattern(<img src="Discard_Apply_buttons.png" />).targetOffset(<span class="dig">37</span>,<span class="dig">0</span>))
+            <span class="skw">click</span>(Pattern(<img src="Discard_Apply_buttons.png" />).targetOffset(<span class="dig">37</span>,<span class="dig">1</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+            <span class="kw">if</span> exists(<img src="1437554922325.png" />):
+                <span class="skw">find</span>(<img src="1437554942804.png" />)
+                <span class="skw">click</span>(Pattern(<img src="1437554942804.png" />).targetOffset(-<span class="dig">34</span>,<span class="dig">3</span>)); <span class="skw">sleep</span>(<span class="dig">5</span>)
+        <span class="kw">else</span>:
+             Print_text(<span class="str">'Apply action is requested but changes are not detected on current page.'</span>)
+             Capture_screen()
+    <span class="kw">elif</span> myaction == <span class="str">'Discard'</span>:
+        <span class="skw">find</span>(<img src="Discard_Apply_buttons.png" />)
+        hover(Pattern(<img src="Discard_Apply_buttons.png" />).targetOffset(-<span class="dig">34</span>,<span class="dig">0</span>))
+        <span class="skw">click</span>(Pattern(<img src="Discard_Apply_buttons.png" />).targetOffset(-<span class="dig">34</span>,<span class="dig">0</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        Print_debug(<span class="str">'Discard changes.'</span>)
+    <span class="kw">else</span>:
+        Print_text(<span class="str">'Invalid changeAction no in (Apply, Discard): '</span> + myaction)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Apply_Video_Changes()
+</pre>
+</body>
+</html>

@@ -1,0 +1,144 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>read_outputs.sikuli</h2> <a href="read_outputs.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Read the first output from ME7000 front-end</span>
+<span class="cmt">#This routine assume the main gui is alread launch and will click on Output Groups tab and read the output info</span>
+<span class="cmt">#inputs: optional: outputGroup=[1..] Output Group Number.  Default will be 1, the first output group</span>
+<span class="cmt">#inputs: optional: outputsInfoFile=[name of the file containing multicast output file]</span>
+<span class="cmt">#Usage: read_outputs.sikuli</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for optional arguments</span>
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'outputGroup'</span>):
+        Set_arg(<span class="str">'outputGroup'</span>, <span class="str">'1'</span>)
+        Print_debug(<span class="str">'outputGroup is not defined.  Will use 1 as default.'</span>)
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'outputsInfoFile'</span>):
+        outputsInfoFile = os.getcwd() + <span class="str">'\\'</span> + <span class="str">'outputs.info'</span>
+        Set_arg(<span class="str">'outputsInfoFile'</span>, outputsInfoFile)
+        Print_debug(<span class="str">'outputsInfoFile is not defined.  Will use default: '</span> + outputsInfoFile )
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+Settings.OcrTextSearch=True
+Settings.OcrTextRead=True
+
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Read_Outputs():
+
+    <span class="cmt">#first need to select Output group tabs</span>
+    Set_arg(<span class="str">'tabName'</span>, <span class="str">'Output Groups'</span>)
+    runScript(sikuliScriptDir + <span class="str">'nav_tabs'</span>)
+
+    <span class="cmt">#define region </span>
+    myArea = Region(<span class="skw">find</span>(<img src="Mux_top-1.png" />))
+    myArea=Region(myArea.getX(), myArea.getY()+<span class="dig">20</span>, <span class="dig">370</span>, <span class="dig">20</span>)
+
+    <span class="cmt">#read first outputs.  For any other outpus, will have to be a multiple of 20*x</span>
+    myArea=Region(myArea.getX(), myArea.getY()+<span class="dig">20</span>, <span class="dig">370</span>, <span class="dig">20</span>)
+    findtext = myArea.text()
+
+    Print_debug(<span class="str">'Raw read: '</span> + findtext)
+    my_match = re.search(<span class="str">r'.+\((\d+\.\s*\d+\.\s*\d+\.\s*\d+).(\d\d\d\d)\)'</span>, findtext)
+
+    <span class="kw">if</span> <span class="kw">not</span> my_match:
+        <span class="kw">print</span> <span class="str">'failed to read multicast output.'</span>
+        exit(<span class="dig">1</span>)
+    <span class="kw">else</span>:
+        my_udpip = my_match.group(<span class="dig">1</span>).replace(<span class="str">' '</span>, <span class="str">''</span>)
+        my_udpport = my_match.group(<span class="dig">2</span>)
+        Print_debug(<span class="str">'Found multicast address: '</span> + my_udpip + <span class="str">':'</span> + my_udpport)
+
+    <span class="cmt">#Write outputs to file</span>
+    my_outputfile = Get_arg(<span class="str">'outputsInfoFile'</span>)
+    target = open(my_outputfile, <span class="str">'w'</span>)
+    target.write(<span class="str">'udpIp='</span> + my_udpip + <span class="str">'\n'</span>)
+    target.write(<span class="str">'udpPort='</span> + my_udpport + <span class="str">'\n'</span>)
+    target.close()
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Read_Outputs()
+</pre>
+</body>
+</html>

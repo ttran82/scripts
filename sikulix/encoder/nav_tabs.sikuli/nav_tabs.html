@@ -1,0 +1,205 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>nav_tabs.sikuli</h2> <a href="nav_tabs.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run Navigate the tab menu </span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#inputs: tabName=&lt;&gt; tabSubName=[] tabSubNameItem=[]</span>
+<span class="cmt">#    tabName = Setup, Mux, Output Groups, Processing, Alarms, Analysis, Thumbnails</span>
+<span class="cmt">#    tabSubName = Setup-&gt;System, Redundancy, Files, SNMP</span>
+<span class="cmt">#                 Mux-&gt; no subtabs</span>
+<span class="cmt">#                 Groups-&gt; no subtabs</span>
+<span class="cmt">#                 Processing-&gt; no subtabs</span>
+<span class="cmt">#                     processingView-&gt;map, statmux, mbr</span>
+<span class="cmt">#                 Alarms-&gt;Alarms, Settings</span>
+<span class="cmt">#                 Analysis-&gt; no subtabs</span>
+<span class="cmt">#                 Thumbnails-&gt; no subtabs</span>
+<span class="cmt">#    tabSubNameItem = Setup-&gt;System-&gt;Device, Network, Software Update</span>
+<span class="cmt">#                     Setup-&gt;Rundundancy-&gt;no subtabs</span>
+<span class="cmt">#                     Setup-&gt;Files-&gt;no subtabs</span>
+<span class="cmt">#                     Setup-&gt;SNMP-&gt;no subtabs</span>
+<span class="cmt">#</span>
+<span class="cmt">#                     Alarms-&gt;Alarms-&gt;no subtabs</span>
+<span class="cmt">#                     Alarms-&gt;Settings-&gt;no subtabs</span>
+<span class="cmt">#</span>
+<span class="cmt">#Usage: nav_menu.sikuli tabName=&lt;&gt; tabSubName=[] tabSubNameItem=[]</span>
+<span class="cmt">#Usage: nav_menu.sikuli tabName=Setup tabSubName=System tabSubNameItem=Device</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'tabName'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Nav_Tabs():
+    Main_gui(<span class="dig">2</span>)
+    my_tab = Get_arg(<span class="str">'tabName'</span>)
+    my_subtab = Get_arg(<span class="str">'tabSubName'</span>)
+    my_subtabitem = Get_arg(<span class="str">'tabSubNameItem'</span>)
+
+    <span class="skw">wait</span>(<img src="1437001195717.png" />)
+    <span class="kw">if</span> <span class="skw">find</span>(<img src="1437001195717.png" />):
+        <span class="cmt">#found main menu</span>
+        <span class="cmt">#This is for Setup tab</span>
+        <span class="kw">if</span> my_tab.lower() == <span class="str">'setup'</span>:
+            Print_debug(<span class="str">'Selecting Setup tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">wait</span>(<img src="Setup_selected.png" />)
+            <span class="cmt">#Now walks thru the Sub tabs </span>
+            <span class="kw">if</span> my_subtab:
+                <span class="kw">if</span> my_subtab == <span class="str">'System'</span>:
+                    <span class="skw">click</span>(Pattern(<img src="Setup_selected-1.png" />).targetOffset(<span class="dig">22</span>,<span class="dig">26</span>)); <span class="skw">wait</span>(<img src="Setup_System_selected-2.png" />)
+                    <span class="kw">if</span> my_subtabitem:
+                        <span class="kw">if</span> my_subtabitem == <span class="str">'Device'</span>:
+                            <span class="skw">click</span>(Pattern(<img src="Setup_System_selected-2.png" />).targetOffset(-<span class="dig">2</span>,<span class="dig">186</span>)); <span class="skw">wait</span>(<img src="Device_selected-2.png" />)
+                        <span class="kw">elif</span> my_subtabitem == <span class="str">'Network'</span>:
+                            <span class="skw">click</span>(Pattern(<img src="Setup_System_selected-2.png" />).targetOffset(-<span class="dig">2</span>,<span class="dig">186</span>)); <span class="skw">click</span>(Pattern(<img src="Network_select-1.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(<img src="Network_selected-1.png" />)
+                        <span class="kw">elif</span> my_subtabitem == <span class="str">'Software Update'</span>:
+                            <span class="skw">click</span>(Pattern(<img src="Setup_System_selected-2.png" />).targetOffset(-<span class="dig">2</span>,<span class="dig">186</span>)); <span class="skw">click</span>(Pattern(<img src="SoftwareUpdate_select-1.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(<img src="SoftwareUpdate_selected-1.png" />)
+                        <span class="kw">else</span>: Exit_program(<span class="str">'Invalid sub tab item: '</span> + str(my_subtabitem), <span class="dig">2</span>)
+                <span class="kw">elif</span> my_subtab == <span class="str">'Redundancy'</span>:
+                    <span class="skw">click</span>(Pattern(<img src="Setup_selected-1.png" />).targetOffset(<span class="dig">22</span>,<span class="dig">26</span>)); <span class="skw">click</span>(<img src="Redundancy_select-1.png" />); <span class="skw">wait</span>(<img src="Redundancy_selected-1.png" />)
+                <span class="kw">elif</span> my_subtab == <span class="str">'Files'</span>:
+                    <span class="skw">click</span>(Pattern(<img src="Setup_selected-1.png" />).targetOffset(<span class="dig">22</span>,<span class="dig">26</span>)); <span class="skw">click</span>(Pattern(<img src="Files_select-1.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(<img src="Files_selected-1.png" />)
+                <span class="kw">elif</span> my_subtab == <span class="str">'SNMP'</span>:
+                    <span class="skw">click</span>(Pattern(<img src="Setup_selected-1.png" />).targetOffset(<span class="dig">22</span>,<span class="dig">26</span>)); <span class="skw">click</span>(Pattern(<img src="SNMP_select-1.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(<img src="SNMP_selected-1.png" />)
+                <span class="kw">else</span>:
+                    Exit_program(<span class="str">'Invalid Setup sub tab: '</span> + str(my_subtab), <span class="dig">2</span>)
+        <span class="cmt">#This is for Mux tab</span>
+        <span class="kw">elif</span> my_tab.lower() == <span class="str">'mux'</span>:
+            Print_debug(<span class="str">'Selecting Mux tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">click</span>(Pattern(<img src="Mux_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(<img src="Mux_selected.png" />); <span class="skw">find</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">click</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">8</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(-<span class="dig">14</span>,<span class="dig">1</span>))
+            <span class="cmt">#check if the vertical bar is in correct position</span>
+            <span class="kw">if</span> <span class="kw">not</span> exists(Pattern(<img src="Processing_Alarm_vertical_bar.png" />).exact()): <span class="skw">find</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(-<span class="dig">14</span>,<span class="dig">1</span>)); <span class="skw">dragDrop</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">24</span>,<span class="dig">5</span>), Pattern(<img src="1437001195717.png" />).targetOffset(<span class="dig">307</span>,<span class="dig">50</span>))
+        <span class="cmt">#This is for Output Groups tab</span>
+        <span class="kw">elif</span> my_tab.lower() == <span class="str">'groups'</span>:
+            Print_debug(<span class="str">'Selecting Groups tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">click</span>(<img src="Groups_select.png" />); <span class="skw">wait</span>(<img src="Groups_selected.png" />); <span class="skw">find</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">click</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">8</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(-<span class="dig">14</span>,<span class="dig">1</span>))
+            <span class="kw">if</span> <span class="kw">not</span> exists(Pattern(<img src="ProcessingLB.png" />).similar(<span class="dig">0.90</span>)): <span class="skw">find</span>(Pattern(<img src="min_max.png" />).targetOffset(-<span class="dig">14</span>,<span class="dig">1</span>)); <span class="skw">dragDrop</span>(Pattern(<img src="min_max.png" />).targetOffset(<span class="dig">24</span>,<span class="dig">5</span>), Pattern(<img src="1437001195717.png" />).targetOffset(<span class="dig">307</span>,<span class="dig">50</span>))
+            <span class="kw">if</span> my_subtab:
+                <span class="kw">if</span> my_subtab.upper() == <span class="str">'OUTPUT'</span>: <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">46</span>,<span class="dig">62</span>)); <span class="skw">wait</span>(<img src="OUTPUT_selected.png" />)
+                <span class="kw">elif</span> my_subtab.upper() == <span class="str">'MBR'</span>: <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">46</span>,<span class="dig">62</span>)); <span class="skw">click</span>(<img src="MBR_select.png" />); <span class="skw">wait</span>(<img src="MBR_selected.png" />)
+                <span class="kw">else</span>: Exit_program(<span class="str">'Invalid Groups sub tab: '</span> + my_subtab, <span class="dig">2</span>)
+        <span class="cmt">#This is for Processing tab</span>
+        <span class="kw">elif</span> my_tab.lower() == <span class="str">'processing'</span>:
+            Print_debug(<span class="str">'Selecting Processing tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">click</span>(<img src="Process_select.png" />); <span class="skw">wait</span>(<img src="Processing_selected.png" />); <span class="skw">find</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">click</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">8</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.80</span>).targetOffset(-<span class="dig">14</span>,<span class="dig">1</span>))
+            <span class="cmt">#check if the vertical bar is in correct position</span>
+            <span class="kw">if</span> <span class="kw">not</span> exists(Pattern(<img src="Processing_Alarm_fromProcessing.png" />).similar(<span class="dig">0.90</span>)): <span class="skw">find</span>(Pattern(<img src="min_max.png" />).targetOffset(-<span class="dig">14</span>,<span class="dig">1</span>)); <span class="skw">dragDrop</span>(Pattern(<img src="min_max.png" />).targetOffset(<span class="dig">24</span>,<span class="dig">5</span>), Pattern(<img src="1437001195717.png" />).targetOffset(<span class="dig">307</span>,<span class="dig">50</span>))
+            myview = Get_arg(<span class="str">'processingView'</span>)
+            <span class="kw">if</span> myview:
+                <span class="skw">find</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>))
+                <span class="kw">if</span> myview.lower() == <span class="str">'map'</span>: <span class="skw">click</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">123</span>,<span class="dig">3</span>)); <span class="skw">click</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">70</span>,<span class="dig">20</span>))
+                <span class="kw">elif</span> myview.lower() == <span class="str">'statmux'</span>: <span class="skw">click</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">123</span>,<span class="dig">3</span>)); <span class="skw">click</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">70</span>,<span class="dig">32</span>))
+                <span class="kw">elif</span> myview.lower() == <span class="str">'mbr'</span>: <span class="skw">click</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">123</span>,<span class="dig">3</span>)); <span class="skw">click</span>(Pattern(<img src="View_under_process.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">70</span>,<span class="dig">50</span>))
+                <span class="kw">else</span>: Exit_program(<span class="str">'Invalid processingView: '</span> + myview, <span class="dig">2</span>)
+        <span class="kw">elif</span> my_tab == <span class="str">'Alarms'</span>:
+            Print_debug(<span class="str">'Selecting Alarms tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">click</span>(<img src="Alarms_select.png" />); <span class="skw">wait</span>(Pattern(<img src="Alarms_selected-1.png" />).similar(<span class="dig">0.80</span>))
+            <span class="cmt">#Now walks thru the sub tabs</span>
+            <span class="kw">if</span> my_subtab:
+                <span class="kw">if</span> my_subtab == <span class="str">'Alarms'</span>:
+                    <span class="skw">click</span>(Pattern(<img src="Alarms_selected-1.png" />).similar(<span class="dig">0.80</span>).targetOffset(-<span class="dig">402</span>,<span class="dig">33</span>)); <span class="skw">wait</span>(<img src="AlarmsSettings.png" />)
+                    <span class="kw">if</span> <span class="kw">not</span> exists(Pattern(<img src="Alarm_vertical-1.png" />).exact()): <span class="skw">find</span>(<img src="StateSeverity_vertoca;.png" />); <span class="skw">dragDrop</span>(Pattern(<img src="StateSeverity_vertoca;.png" />).targetOffset(-<span class="dig">73</span>,<span class="dig">2</span>), Pattern(<img src="1437001195717.png" />).targetOffset(<span class="dig">271</span>,<span class="dig">80</span>))
+                <span class="kw">elif</span> my_subtab == <span class="str">'Settings'</span>:
+                    <span class="skw">click</span>(Pattern(<img src="Alarms_selected-1.png" />).similar(<span class="dig">0.80</span>).targetOffset(-<span class="dig">402</span>,<span class="dig">33</span>)); <span class="skw">click</span>(Pattern(<img src="AlarmsSettings.png" />).targetOffset(<span class="dig">34</span>,<span class="dig">0</span>)); <span class="skw">wait</span>(Pattern(<img src="AlarmsSettings-1.png" />).similar(<span class="dig">0.80</span>))
+                <span class="kw">else</span>:
+                    Exit_program(<span class="str">'Invalid Alarm sub tab: '</span> + my_subtab, <span class="dig">2</span>)
+        <span class="kw">elif</span> my_tab == <span class="str">'Analysis'</span>:
+            Print_debug(<span class="str">'Selecting Analysis tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">click</span>(<img src="Analysis_select.png" />); <span class="skw">wait</span>(<img src="Analysis_selected.png" />)
+        <span class="kw">elif</span> my_tab == <span class="str">'Thumbnails'</span>:
+            Print_debug(<span class="str">'Selecting Thumbnails tab'</span>)
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">37</span>,<span class="dig">37</span>)); <span class="skw">click</span>(<img src="Thumbnail_select.png" />); <span class="skw">wait</span>(<img src="Thumbnails_selected.png" />)
+        <span class="kw">else</span>:
+            Print_text(<span class="str">'Invalid tab name: '</span> + my_tab)
+            exit(<span class="dig">1</span>)
+    <span class="cmt">#wrong menu name    </span>
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Failed to look for main gui page.'</span>, <span class="dig">1</span>, <span class="dig">1</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Nav_Tabs()
+</pre>
+</body>
+</html>

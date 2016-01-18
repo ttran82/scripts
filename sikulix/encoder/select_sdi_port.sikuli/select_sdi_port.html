@@ -1,0 +1,148 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>select_sdi_port.sikuli</h2> <a href="select_sdi_port.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Setup SDI port input front-end</span>
+<span class="cmt">#This routine will allow the user to select SDI port from either MUX or Processing tabs</span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#inputs: required: boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; tabName=[Mux (default), Processing]  </span>
+<span class="cmt">#Usage: select_sdi_port.sikuli  boardNum=3 tabName=Mux sdiPort=8</span>
+<span class="cmt">#Usage: select_sdi_port.sikuli  boardNum=3 tabName=Processing sdiPort=8</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'boardNum'</span>)
+    Check_arg(<span class="str">'sdiPort'</span>)
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'tabName'</span>):
+        Set_arg(<span class="str">'tabName'</span>, <span class="str">'Mux'</span>)
+        Print_debug(<span class="str">'tabName is not defined.  Will use Mux as default.'</span>)
+    my_tab = Get_arg(<span class="str">'tabName'</span>)
+    <span class="kw">if</span> my_tab == <span class="str">'Mux'</span> <span class="kw">or</span> my_tab == <span class="str">'Processing'</span>:
+        Print_debug(<span class="str">'tabName '</span> + my_tab + <span class="str">' is valid.'</span>)
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Invalid tabName given not in range (Mux/Processing): '</span> + my_tab, <span class="dig">2</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+my_boardnum = int(Get_arg(<span class="str">'boardNum'</span>))
+my_tab = Get_arg(<span class="str">'tabName'</span>)
+my_sdiport = int(Get_arg(<span class="str">'sdiPort'</span>))
+<span class="cmt">#Any definitions are here</span>
+
+<span class="kw">def</span> Select_Board():
+    <span class="cmt">#First navigate to the correct tabs</span>
+    Set_arg(<span class="str">'tabName'</span>, <span class="str">'Mux'</span>)
+    RunSikuli(<span class="str">'nav_tabs'</span>)
+
+    <span class="cmt">#First reset everything to collapse tree</span>
+    <span class="skw">find</span>(Pattern(<img src="min_max.png" />).similar(<span class="dig">0.90</span>)); <span class="skw">click</span>(Pattern(<img src="min_max-1.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">14</span>,<span class="dig">0</span>)); <span class="skw">doubleClick</span>(Pattern(<img src="min_max-1.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">300</span>,<span class="dig">23</span>));
+    <span class="kw">if</span> <span class="kw">not</span> exists(<img src="All_boards.png" />): <span class="skw">doubleClick</span>(Pattern(<img src="min_max-1.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">300</span>,<span class="dig">23</span>))
+    <span class="skw">wait</span>(<img src="All_boards.png" />)
+
+    <span class="cmt">#clicking on the correct board</span>
+    <span class="kw">if</span> my_boardnum == <span class="dig">1</span>: <span class="skw">doubleClick</span>(Pattern(<img src="All_boards.png" />).targetOffset(<span class="dig">5</span>,-<span class="dig">26</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">elif</span> my_boardnum == <span class="dig">2</span>: <span class="skw">doubleClick</span>(Pattern(<img src="All_boards.png" />).targetOffset(<span class="dig">4</span>,-<span class="dig">8</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">elif</span> my_boardnum == <span class="dig">3</span>: <span class="skw">doubleClick</span>(Pattern(<img src="All_boards.png" />).targetOffset(<span class="dig">5</span>,<span class="dig">10</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">elif</span> my_boardnum == <span class="dig">4</span>: <span class="skw">doubleClick</span>(Pattern(<img src="All_boards.png" />).targetOffset(<span class="dig">4</span>,<span class="dig">29</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Invalid board range provided outside of (1..4): '</span> + my_boardnum)
+    <span class="kw">if</span> exists(Pattern(<img src="all_sdi_ports.png" />).similar(<span class="dig">0.80</span>)): Print_debug(<span class="str">'SDI selection ran fine. '</span>)
+    <span class="kw">else</span>: Exit_program(<span class="str">'SDI selection failed. '</span>, <span class="dig">1</span>, <span class="dig">1</span>)
+
+<span class="kw">def</span> Select_SDI():
+    <span class="kw">if</span> my_sdiport == <span class="dig">1</span>: <span class="skw">find</span>(<img src="1437468655400.png" />); <span class="skw">click</span>(<img src="1437468655400.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">2</span>: <span class="skw">find</span>(<img src="1437468623934.png" />); <span class="skw">click</span>(<img src="1437468623934.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">3</span>: <span class="skw">find</span>(<img src="1437468574569.png" />); <span class="skw">click</span>(<img src="1437468574569.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">4</span>: <span class="skw">find</span>(<img src="1437468708286.png" />); <span class="skw">click</span>(<img src="1437468708286.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">5</span>: <span class="skw">find</span>(<img src="1437468839990.png" />); <span class="skw">click</span>(<img src="1437468839990.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">6</span>: <span class="skw">find</span>(<img src="1437468869433.png" />); <span class="skw">click</span>(<img src="1437468869433.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">7</span>: <span class="skw">find</span>(<img src="1437468893307.png" />); <span class="skw">click</span>(<img src="1437468893307.png" />)
+    <span class="kw">elif</span> my_sdiport == <span class="dig">8</span>: <span class="skw">find</span>(<img src="1437468934637.png" />); <span class="skw">click</span>(<img src="1437468934637.png" />)
+    <span class="kw">else</span>: Exit_program(<span class="str">'Invalid sdi port range provided outside of (1..8): '</span> + my_sdiport, <span class="dig">2</span>)
+    <span class="kw">if</span> exists(<img src="1437554922325.png" />): <span class="skw">find</span>(<img src="apply_discard_cancel.png" />); <span class="skw">click</span>(<img src="apply_discard_cancel.png" />);
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Select_Board()
+Select_SDI()
+</pre>
+</body>
+</html>

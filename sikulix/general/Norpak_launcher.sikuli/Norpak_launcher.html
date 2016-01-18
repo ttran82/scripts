@@ -1,0 +1,223 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>Norpak_launcher.sikuli</h2> <a href="Norpak_launcher.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Launch Norpak Signal Generator Dashboard application with the option to load sd/hd metadata</span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#"C:\Program Files (x86)\DashBoard\DashBoard.exe"</span>
+<span class="cmt">#inputs: norpakCmd=[] norpakMetaFile=[] norpakMetaDir=[] norpakWaitTime=[default=60]</span>
+<span class="cmt">#input: norpakMetaFile = [SD_MetaData.bin, HD_MetaData.bin, etc]</span>
+<span class="cmt">#input: videoFormat = [480i59.94 576i50 720p59.94 720p50 1080i59.94 1080i50</span>
+<span class="cmt">#Usage: norpak_launcher.sikuli norpakCmd=[] norpakMetaFile=[] norpakMetaDir=</span>
+<span class="cmt">#Usage: norpak_dashboard.sikuli videoFormat=[] afdValue=[0..15 or 0..F]</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> commonlib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'norpakCmd'</span>):
+        my_norpakcmd = <span class="str">'C:\\Program Files (x86)\\DashBoard\\DashBoard.exe'</span>
+        Set_arg(<span class="str">'norpakCmd'</span>, my_norpakcmd)
+        Print_debug(<span class="str">'Norpak Dashboard App Command is not given.  Will use default: '</span> + my_isolocmd)
+    <span class="kw">if</span> Get_arg(<span class="str">'norpakMetaFile'</span>):
+        my_metafile = Get_arg(<span class="str">'norpakMetaFile'</span>)
+        <span class="kw">if</span> <span class="kw">not</span> re.search(<span class="str">r'\\'</span>, my_metafile):
+            <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'norpakMetaDir'</span>):
+                my_metadir = getBundlePath()
+                Set_arg(<span class="str">'norpakMetaDir'</span>, my_metadir)
+            my_metafile = Get_arg(<span class="str">'norpakDir'</span>) + <span class="str">'\\'</span> my_metafile
+        <span class="kw">if</span> os.path.exists(my_metafile):
+            Set_arg(<span class="str">'norpakMetaFile'</span>, my_metafile)
+        <span class="kw">else</span>:
+            Exit_program(my_metafile + <span class="str">' is not existed.'</span>, <span class="dig">2</span>)
+    <span class="kw">if</span> Get_arg(<span class="str">'videoFormat'</span>):
+        Check_arg(<span class="str">'afdValue'</span>)
+
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+NorpakDashboardTitle = <span class="str">'DashBoard'</span>
+my_waittime = Get_arg(<span class="str">'norpakWaitTime'</span>)
+<span class="cmt">#Any definitions are here</span>
+
+<span class="kw">def</span> Launch_Dashboard():
+    <span class="str">'''Start Norpak Dashboard 
+    '''</span>
+    <span class="cmt">#First check if the app is already running</span>
+    mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + NorpakDashboardTitle + <span class="str">'\" windows_action=2'</span>
+    my_status = Run_cmd(mycmd)
+    Print_debug(my_status)
+    <span class="kw">if</span> int(my_status) == <span class="dig">0</span>:
+        Print_debug(NorpakDashboardTitle + <span class="str">' is already running.  Use current session.'</span>)
+    <span class="kw">else</span>:
+        <span class="cmt">#First find out if Isolo is already running or not</span>
+        my_norpakcmd = Get_arg(<span class="str">'norpakCmd'</span>)
+        my_app = openApp(my_norpakcmd)
+        Print_debug(<span class="str">'Waiting for Norpak Dashboard software to come up... '</span> + my_waittime)
+        <span class="skw">wait</span>(<img src="DashBoard_title.png" />, int(my_waittime))
+        <span class="kw">if</span> exists(<img src="DashBoard_title.png" />):
+            mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + NorpakDashboardTitle + <span class="str">'\" windows_action=2'</span>
+            my_status = Run_cmd(mycmd)
+                <span class="kw">if</span> int(my_status) == <span class="dig">0</span>:
+                    Print_debug(NorpakDashboardTitle + <span class="str">' launched successfully.'</span>)
+                <span class="kw">else</span>:
+                    Exit_program(NorpakDashboardTitle + <span class="str">' failed to launch successfully.'</span>)
+
+<span class="cmt">#launch the main Norpak Dashboard software</span>
+<span class="kw">def</span> Load_MetaFile():
+    <span class="kw">if</span> Get_arg(<span class="str">'norpakMetaFile'</span>):
+        my_metafile = Get_arg(<span class="str">'norpakMetaFile'</span>)
+        <span class="skw">find</span>(Pattern(<img src="RefreshUnloapReboot_buttons.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="RefreshUnloapReboot_buttons.png" />).exact())
+        <span class="skw">wait</span>(<img src="Open_window.png" />); <span class="skw">click</span>(Pattern(<img src="Filename.png" />).similar(<span class="dig">0.90</span>).targetOffset(<span class="dig">165</span>,-<span class="dig">13</span>)); <span class="skw">type</span>(<span class="str">"a"</span>, KEY_CTRL); <span class="skw">type</span>(myfile); <span class="skw">type</span>(Key.ENTER)
+        <span class="skw">wait</span>(<img src="Confirm_upload_window.png" />); <span class="skw">click</span>(Pattern(<img src="Continuecancel.png" />).targetOffset(-<span class="dig">38</span>,-<span class="dig">1</span>)); waitVanish(<img src="Uploadingfile_window.png" />)
+
+<span class="kw">def</span> Set_AFD_Value():
+    <span class="kw">if</span> Get_arg(<span class="str">'afdValue'</span>):
+
+        videoformat = Get_arg(<span class="str">'videoFormat'</span>)
+        videotarget = <span class="str">''</span>
+        scanrate = <span class="str">''</span>
+        <span class="kw">if</span> videoformat == <span class="str">'480i59.94'</span>:
+            videotarget=(Pattern(<img src="480i59.94.png" />).exact())
+            scanrate = <span class="str">'interlaced'</span>
+        <span class="kw">elif</span> videoformat == <span class="str">'576i50'</span>:
+            videotarget=(Pattern(<img src="576i50.png" />).exact())
+            scanrate = <span class="str">'interlaced'</span>
+        <span class="kw">elif</span> videoformat == <span class="str">'1080i59.94'</span>:
+            videotarget=(Pattern(<img src="1080i59.94.png" />).exact())
+            scanrate = <span class="str">'interlaced'</span>
+        <span class="kw">elif</span> videoformat == <span class="str">'1080i50'</span>:
+            videotarget=(Pattern(<img src="1080i50.png" />).exact())
+            scanrate = <span class="str">'interlaced'</span>
+        <span class="kw">elif</span> videoformat == <span class="str">'720p59.94'</span>:
+            videotarget=(Pattern(<img src="720p5994.png" />).exact())
+            scanrate = <span class="str">'progressive'</span>
+        <span class="kw">elif</span> videoformat == <span class="str">'720p50'</span>:
+            videotarget=(Pattern(<img src="720p50.png" />).exact())
+            scanrate = <span class="str">'progressive'</span>
+        <span class="kw">else</span>:
+            Exit_program(<span class="str">'Invalid video format entered: '</span> + videoformat, <span class="dig">2</span>)
+
+        <span class="cmt">#click dropdown menu and move bar all the way to the top</span>
+        <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">214</span>,<span class="dig">0</span>))
+        <span class="skw">find</span>(<img src="arrow_up.png" />);
+        <span class="skw">dragDrop</span>(Pattern(<img src="middle_bar-1.png" />).exact(),Pattern(<img src="arrow_up.png" />).targetOffset(<span class="dig">0</span>,<span class="dig">13</span>))
+
+        afdvalue = Get_arg(<span class="str">'afdValue'</span>)
+        afdtarget = <span class="str">''</span>
+
+        <span class="kw">if</span> scanrate == <span class="str">'interlaced'</span>:
+            <span class="kw">if</span> afdvalue == <span class="str">'0'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">25</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'1'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">40</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'2'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">55</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'3'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">70</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'4'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">85</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'5'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">100</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'6'</span>:
+                <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">115</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'7'</span>:
+                <span class="skw">click</span>(<img src="arrow_down-1.png" />); <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">25</span>)
+            <span class="kw">elif</span> afdvalue == <span class="str">'8'</span>:
+                <span class="skw">click</span>(<img src="arrow_down-1.png" />); <span class="skw">click</span>(videotarget).targetOffset(<span class="dig">128</span>,<span class="dig">40</span>)
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Invalid afdValue entered not in range [0..15]: '</span> + afdvalue)
+        <span class="kw">else</span>:
+            <span class="kw">if</span> afd == <span class="str">'0'</span>:
+                afdtarget = (<img src="InterlacedAFD0.png" />)
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Invalid afdValue entered not in range [0..15]: '</span> + afdvalue)
+
+
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Launch_Dashboard()
+Load_MetaFile()
+Set_AFD_Value()<h3>ERROR: EOF in multi-line statement</h3>
+</font></pre>
+</pre>
+</body>
+</html>

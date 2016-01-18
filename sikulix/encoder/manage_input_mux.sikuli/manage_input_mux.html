@@ -1,0 +1,177 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>manage_input_mux.sikuli</h2> <a href="manage_input_mux.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#This script will select Mux tab and proceed to create an udp input mux</span>
+<span class="cmt">#Input: boardNum = [1..4]</span>
+<span class="cmt">#Input: portNum = [1..10]</span>
+<span class="cmt">#Input: muxAction = [delete create]</span>
+<span class="cmt">#Input: muxName = [InputMux001 .. InputMux100]</span>
+<span class="cmt">#Input: muxAddr = [x.x.x.x], muxPort = [xxxx]</span>
+<span class="cmt">#Input: portIncrement = 1/0, will enable when set </span>
+<span class="cmt">#Input: octetIncrement = 1/0, will enable when set</span>
+<span class="cmt">#Input: bulkNum = [1..20]</span>
+<span class="cmt">#Input: muxActiveCheck = If set, will check if input mux is active or not</span>
+<span class="cmt">#Usage: manage_input_mux.sikuli boardNum=4 portNum=7 muxAction=Create muxName=InputMux1 muxAddr=2xx.xxx.xx.x muxPort=xxxx muxActiveCheck=1</span>
+<span class="cmt">#Usage: manage_input_mux.sikuli muxAction=delete muxName=InputMux1</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'boardNum'</span>)
+    Check_arg(<span class="str">'portNum'</span>)
+    Check_arg(<span class="str">'muxName'</span>)
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'muxAction'</span>):
+        Set_arg(<span class="str">'muxAction'</span>, <span class="str">'delete'</span>)
+        Print_debug(<span class="str">'muxAction is not defined.  Will use create as default.'</span>)
+    <span class="kw">if</span> Get_arg(<span class="str">'muxAction'</span>).lower() == <span class="str">'create'</span>:
+        Check_arg(<span class="str">'muxAddr'</span>)
+        Check_arg(<span class="str">'muxPort'</span>)
+
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+my_board = Get_arg(<span class="str">'boardNum'</span>)
+my_port = Get_arg(<span class="str">'portNum'</span>)
+eth_port = my_board.lower() + <span class="str">'/'</span> + my_port.lower()
+
+inputmuxNameDict = {
+    <span class="str">'InputMux001'</span>:<img src="InputMux001_label.png" />, <span class="str">'InputMux002'</span>:<img src="lnputMux002_select.png" />, <span class="str">'InputMux003'</span>:<img src="nputMux003_select.png" />, <span class="str">'InputMux004'</span>:<img src="nputMux004_select.png" />, <span class="str">'InputMux005'</span>:<img src="InputMux005_select.png" />,
+    <span class="str">'InputMux006'</span>:<img src="InputMux006_select.png" />, <span class="str">'InputMux007'</span>:<img src="InputMux007_select.png" />, <span class="str">'InputMux008'</span>:<img src="InputMux008_select.png" />, <span class="str">'InputMux009'</span>:<img src="InputMux009_select.png" />, <span class="str">'InputMux010'</span>:<img src="InputMux010_select.png" />,
+    <span class="str">'InputMux_1'</span>:<img src="lnputMux_1_selected-1.png" />, <span class="str">'InputMux_2'</span>:<img src="InputMux2_selected.png" />, <span class="str">'InputMux_3'</span>:<img src="InputMux3_selected.png" />, <span class="str">'InputMux_4'</span>:<img src="InputMux4_selected.png" />, <span class="str">'InputMux_5'</span>:Pattern(<img src="InputMux5_selected.png" />).exact(),
+    <span class="str">'InputMux_6'</span>:<img src="InputMux6_selected.png" />, <span class="str">'InputMux_7'</span>:<img src="InputMux7_selected.png" />, <span class="str">'InputMux_8'</span>:<img src="InputMux8_selected.png" />, <span class="str">'InputMux_9'</span>:<img src="lnputMux_9_selected.png" />, <span class="str">'InputMux_10'</span>:<img src="lnputMux_10_selected.png" />
+    }
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Verify_Mux_Status():
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> Create_Input_Mux():
+    <span class="cmt">#first select the Mux tab and select the right port       </span>
+    Set_arg(<span class="str">'tabName'</span>, <span class="str">'Mux'</span>)
+    Set_arg(<span class="str">'portClick'</span>, <span class="str">'2'</span>)
+    RunSikuli(<span class="str">'nav_tabs'</span>)
+    <span class="cmt">#Now create the input mux</span>
+    <span class="skw">find</span>(<img src="create_input_icons.png" />); <span class="skw">click</span>(Pattern(<img src="create_input_icons.png" />).targetOffset(-<span class="dig">34</span>,<span class="dig">1</span>)); <span class="skw">wait</span>(<img src="CreateInputMux_window.png" />)
+    <span class="cmt">#Enter muxName</span>
+    muxname = Get_arg(<span class="str">'muxName'</span>)
+    <span class="skw">find</span>(<img src="MuxName_label.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="MuxName_label.png" />).targetOffset(<span class="dig">80</span>,<span class="dig">0</span>)); <span class="skw">type</span>(muxname)
+    <span class="cmt">#Enter multicast adress</span>
+    muxaddr = Get_arg(<span class="str">'muxAddr'</span>)
+    <span class="skw">find</span>(<img src="IPAddress_label.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="IPAddress_label.png" />).targetOffset(<span class="dig">40</span>,<span class="dig">0</span>)); <span class="skw">type</span>(muxaddr)
+    <span class="cmt">#Enter multicast port</span>
+    muxport = Get_arg(<span class="str">'muxPort'</span>)
+    <span class="skw">find</span>(<img src="UDPPort_label.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="UDPPort_label.png" />).targetOffset(<span class="dig">40</span>,<span class="dig">0</span>)); <span class="skw">type</span>(muxport)
+    <span class="kw">if</span> Get_arg(<span class="str">'portIncrement'</span>):
+        <span class="skw">find</span>(<img src="PortInaement_checkbox.png" />); <span class="skw">click</span>(Pattern(<img src="PortInaement_checkbox.png" />).targetOffset(-<span class="dig">40</span>,<span class="dig">0</span>))
+        bulknum = Get_arg(<span class="str">'bulkNum'</span>)
+        <span class="kw">if</span> bulknum: <span class="skw">find</span>(<img src="NumberofMux_label.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="NumberofMux_label.png" />).targetOffset(<span class="dig">60</span>,<span class="dig">0</span>)); <span class="skw">type</span>(bulknum)
+    <span class="kw">if</span> Get_arg(<span class="str">'octetIncrement'</span>):
+        <span class="skw">find</span>(<img src="LastOctetInc_checkbox.png" />); <span class="skw">click</span>(Pattern(<img src="LastOctetInc_checkbox.png" />).targetOffset(-<span class="dig">53</span>,<span class="dig">0</span>))
+        bulknum = Get_arg(<span class="str">'bulkNum'</span>)
+        <span class="kw">if</span> bulknum: <span class="skw">find</span>(<img src="NumberofMux_label.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="NumberofMux_label.png" />).targetOffset(<span class="dig">60</span>,<span class="dig">0</span>)); <span class="skw">type</span>(bulknum)
+    <span class="cmt">#Hit enter</span>
+    <span class="skw">find</span>(<img src="inputmux_ok_cancel_buttons.png" />); <span class="skw">click</span>(Pattern(<img src="inputmux_ok_cancel_buttons.png" />).targetOffset(-<span class="dig">35</span>,<span class="dig">0</span>))
+    <span class="kw">if</span> exists(<img src="ErrorCreatingMux_window.png" />): Capture_screen(); Exit_program(<span class="str">'Error creating mux: '</span> + muxname, <span class="dig">1</span>, <span class="dig">1</span>)
+    <span class="kw">if</span> exists(<img src="create_mux_Warning.png" />): Capture_screen(); <span class="skw">click</span>(<img src="warning_ok_button.png" />); <span class="skw">click</span>(Pattern(<img src="inputmux_ok_cancel_buttons.png" />).targetOffset(<span class="dig">40</span>,<span class="dig">0</span>)); Exit_program(<span class="str">'Error creating mux: '</span> + muxname, <span class="dig">1</span>)
+    Print_debug(<span class="str">'Mux created successfully: '</span> + muxname)
+
+<span class="kw">def</span> Delete_input_mux():
+    Nav_Port(<span class="str">'double'</span>)
+
+
+
+<span class="kw">def</span> Manage_input_mux():
+    my_action = Get_arg(<span class="str">'muxAction'</span>)
+    <span class="kw">if</span> my_action.lower() == <span class="str">'create'</span>:
+        Create_input_mux()
+    <span class="kw">elif</span> my_action.lower() == <span class="str">'delete'</span>:
+        Delete_input_mux()
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Invalid muxAction entered: '</span> + my_action, <span class="dig">2</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Nav_Port()
+Create_Input_Mux()
+</pre>
+</body>
+</html>

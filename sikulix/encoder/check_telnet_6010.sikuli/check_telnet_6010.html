@@ -1,0 +1,130 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>check_telnet_6010.sikuli</h2> <a href="check_telnet_6010.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Check if the current telnet session is running.  If not running, it is failed.</span>
+<span class="cmt">#input: getLogOnFailure = 0/1.  Default = 0</span>
+<span class="cmt">#input: fileList = list of files on remote machine separated by semicolon.  If copy the whole directory put -r in front of the path</span>
+<span class="cmt">#input: outputDir = which folder to copy the files to.  If only a name is given, it will put under current dir/name folder.  If empty, it will be current dir.</span>
+<span class="cmt">#Usage: check_telnet_6010.sikuli</span>
+<span class="cmt">#Usage: check_telnet_6010.sikuli getLogOnFailure=1 fileList="/var/log/messages;-r /usr/cp/lib/mibs" outputDir=Logs</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'encIp'</span>)
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'getLogOnFailure'</span>):
+        Set_arg(<span class="str">'getLogOnFailure'</span>, <span class="str">'0'</span>)
+        Print_debug(<span class="str">'getLogOnFailure is not defined.  Will use default: 0'</span>)
+
+    <span class="kw">if</span> int(Get_arg(<span class="str">'getLogOnFailure'</span>)) == <span class="dig">1</span>:
+        <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'fileList'</span>):
+            Print_text(<span class="str">'getLogOnFailure enabled, but fileList is empty'</span>, <span class="dig">1</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'outputDir'</span>):
+        mydir = os.getcwd()
+        Set_arg(<span class="str">'outputDir'</span>, mydir)
+        Print_debug(<span class="str">'outputDir is not defined.  Will use default: '</span> + mydir )
+
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Check_Telnet():
+    telnetWinTitle = <span class="str">'Telnet - '</span> + Get_arg(<span class="str">'encIp'</span>)
+    mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + telnetWinTitle + <span class="str">'\" windows_action=0'</span>
+    find_telnet = Run_cmd(mycmd)
+    <span class="kw">if</span> int(find_telnet) == <span class="dig">0</span>:
+        Print_debug(<span class="str">'Telnet 6010 session found.'</span>)
+    <span class="kw">else</span>:
+        <span class="kw">if</span> Get_arg(<span class="str">'getLogOnFailure'</span>):
+            <span class="kw">if</span> int(Get_arg(<span class="str">'getLogOnFailure'</span>)) == <span class="dig">1</span>:
+            mycmd = <span class="str">'auto_pscp.exe fileList=\"'</span> + Get_arg(<span class="str">'fileList'</span>) + <span class="str">'\" outputDir='</span> + Get_arg(<span class="str">'outputDir'</span>)
+            Print_debug(<span class="str">'Getting log files from remote device'</span>)
+        Print_text(<span class="str">'Telnet 6010 session not found.  Core is restarted.'</span>, <span class="dig">1</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Check_Telnet()
+</pre>
+</body>
+</html>

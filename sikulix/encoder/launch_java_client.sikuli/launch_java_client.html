@@ -1,0 +1,230 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>launch_java_client.sikuli</h2> <a href="launch_java_client.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run ME7000 Java Client GUI</span>
+<span class="cmt">#    First check if the GUI is running.  If not, run the GUI login using encGuiLogin, encGuiPassword</span>
+<span class="cmt">#inputs: encIP=[] encGuiLogin encGuiPassword encGuiTimeout clientOutputDir clientFile</span>
+<span class="cmt">#Usage: launch_java_client  </span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#os.environ.get('kleverCurrentDir')</span>
+    Check_arg(<span class="str">'encIp'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> os.getenv(<span class="str">'encGuiLogin'</span>):
+        Set_arg(<span class="str">'encGuiLogin'</span>, <span class="str">'Admin'</span>)
+        Print_debug(<span class="str">'Encoder Gui Login is not given.  Will use default Login: Admin'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'encGuiPassword'</span>):
+        Print_debug(<span class="str">'Encoder Gui Password is not given.  Will use default password: &lt;blank&gt;'</span>)
+        Set_arg(<span class="str">'encGuiPassword'</span>, <span class="str">''</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'encGuiTimeout'</span>):
+        Set_arg(<span class="str">'encGuiTimeout'</span>, <span class="str">'120'</span>)
+        Print_debug(<span class="str">'Encoder Gui Timeout is not given.  Will use default value: 120 seconds'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'clientOutputDir'</span>):
+        Print_debug(<span class="str">'Current output dir is not defined.  Will use default: '</span> + Get_arg(<span class="str">'TEMP'</span>))
+        Set_arg(<span class="str">'clientOutputDir'</span>, str(Get_arg(<span class="str">'TEMP'</span>)))
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'clientFile'</span>):
+        Print_debug(<span class="str">'Current client file is not defined.  Will use default: cp.jnlp'</span>)
+        Set_arg(<span class="str">'clientFile'</span>, <span class="str">'cp.jnlp'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+javaME7000MainTitle = <span class="str">'ME-7000 - '</span> + str(Get_arg(<span class="str">'encIp'</span>)) + <span class="str">' - '</span> + str(Get_arg(<span class="str">'encGuiLogin'</span>))
+javaClientFile = Get_arg(<span class="str">'encIp'</span>) + <span class="str">'_'</span> + Get_arg(<span class="str">'clientFile'</span>)
+javaClientFilePath = Get_arg(<span class="str">'clientOutputDir'</span>) + <span class="str">'\\'</span> + javaClientFile
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Check_client():
+    mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000MainTitle + <span class="str">'\" windows_action=2'</span>
+    find_JavaMainTitle = Run_cmd(mycmd)
+    <span class="kw">if</span> int(find_JavaMainTitle) == <span class="dig">0</span>:
+        Print_debug(javaME7000MainTitle + <span class="str">' is already running.  Use current session.'</span>)
+        exit(<span class="dig">0</span>)
+    <span class="kw">else</span>:
+        Print_debug(javaME7000MainTitle + <span class="str">' is not currently running.'</span>)
+
+<span class="kw">def</span> Download_client():
+    <span class="cmt">#first delete any existing client file</span>
+    <span class="kw">if</span> os.path.exists(javaClientFilePath):
+        os.remove(javaClientFilePath)
+    mycmd = <span class="str">'wget --no-check-certificate https://'</span> + Get_arg(<span class="str">'encIP'</span>) +  <span class="str">'/cgi-bin/'</span> + Get_arg(<span class="str">'clientFile'</span>) + <span class="str">' -O '</span> + javaClientFilePath
+    <span class="cmt">#download java client file       </span>
+    Run_cmd(mycmd)
+    <span class="kw">if</span> <span class="kw">not</span> os.path.exists(javaClientFilePath):
+        Print_text(<span class="str">'Failed to get java client file.'</span>)
+        exit(<span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Print_debug(javaClientFilePath + <span class="str">' downloaded successfully.'</span>)
+
+<span class="kw">def</span> Launch_client():
+    <span class="cmt">#run('auto_show_desktop.exe')</span>
+    javawscmd = <span class="str">'javaws.exe'</span>
+    <span class="kw">if</span> Get_arg(<span class="str">'Javaws8Exe'</span>):
+        javawscmd = Get_arg(<span class="str">'Javaws8Exe'</span>)
+
+    mycmd = <span class="str">'\"'</span> + javawscmd + <span class="str">'\"'</span> + <span class="str">' '</span> + javaClientFilePath
+    myapp = openApp(mycmd)
+
+    Settings.ObserveScanRate = <span class="dig">0.2</span> <span class="cmt">#will check every 5 seconds</span>
+    Settings.OcrTextSearch = True
+    Settings.OcrTextRead = True
+
+    <span class="cmt">#create a loop to last the gui timeout since some machine takes a long time to launch java client</span>
+    my_timeout = int(Get_arg(<span class="str">'encGuiTimeout'</span>))
+    <span class="kw">while</span> my_timeout &gt; <span class="dig">0</span>:
+        <span class="kw">if</span> exists(<img src="1437199090539.png" />,<span class="dig">1</span>):
+            <span class="kw">break</span>
+        <span class="kw">if</span> exists(<img src="1437251184104.png" />,<span class="dig">1</span>):
+            <span class="kw">break</span>
+        <span class="kw">if</span> exists(<img src="1437207713209.png" />,<span class="dig">1</span>):
+            Print_debug(<span class="str">'Failed to launch the java client.'</span>)
+            exit(<span class="dig">1</span>)
+        <span class="kw">if</span> exists(<img src="1437208873105.png" />,<span class="dig">1</span>):
+            <span class="kw">break</span>
+        my_timeout = my_timeout - <span class="dig">5</span>
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(<img src="1437199090539.png" />):
+        Print_debug(<span class="str">'Found security warning pop-up windows'</span>)
+        <span class="skw">find</span>(<img src="1437199605120.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437199605120.png" />).targetOffset(-<span class="dig">39</span>,<span class="dig">1</span>))
+        <span class="skw">sleep</span>(<span class="dig">2</span>)
+
+    <span class="kw">if</span> exists(<img src="1437251184104.png" />):
+        Print_debug(<span class="str">'Found security info pop-up windows'</span>)
+        <span class="skw">find</span>(<img src="1437251184104.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437251184104.png" />).targetOffset(-<span class="dig">63</span>,-<span class="dig">26</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">find</span>(<img src="1437251306967.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437251306967.png" />).targetOffset(-<span class="dig">41</span>,<span class="dig">0</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(<img src="1437207713209.png" />):
+        Print_debug(<span class="str">'Failed to launch the java client.'</span>)
+        exit(<span class="dig">1</span>)
+
+    <span class="cmt">#Need to look for login screen        </span>
+    <span class="kw">if</span> <span class="skw">wait</span>(<img src="1437208873105.png" />):
+        <span class="skw">find</span>(<img src="1437202564044-1.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437202564044-1.png" />).targetOffset(<span class="dig">13</span>,<span class="dig">0</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">type</span>(Get_arg(<span class="str">'encGuiLogin'</span>)); <span class="skw">type</span>(Key.TAB)
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">find</span>(<img src="1437202607392-1.png" />)
+        <span class="skw">click</span>(<img src="1437202607392-1.png" />)
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">type</span>(Get_arg(<span class="str">'encGuiPassword'</span>)); <span class="skw">type</span>(Key.TAB)
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">click</span>(<img src="1437203030696-1.png" />)
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Print_text(<span class="str">'Encoder Login screen failed.'</span>)
+
+    <span class="kw">if</span> exists(<img src="1437207430301.png" />):
+        Print_text(<span class="str">'Encoder Gui login failed.'</span>)
+        <span class="skw">click</span>(Pattern(<img src="1437207539762.png" />).targetOffset(-<span class="dig">24</span>,<span class="dig">19</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="skw">find</span>(<img src="1437207578950.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437207578950.png" />).targetOffset(<span class="dig">48</span>,<span class="dig">1</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+        exit(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(<img src="1437206660164.png" />, <span class="dig">10</span>):
+        Print_debug(<span class="str">'Java client launched successfully.'</span>)
+        mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000MainTitle + <span class="str">'\" windows_action=2'</span>
+        find_JavaMainTitle = Run_cmd(mycmd)
+        exit(<span class="dig">0</span>)
+    <span class="kw">else</span>:
+        Print_debug(<span class="str">'Java client failed to launch.'</span>)
+        exit(<span class="dig">1</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Check_client()
+Download_client()
+Launch_client()
+</pre>
+</body>
+</html>

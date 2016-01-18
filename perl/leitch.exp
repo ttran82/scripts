@@ -1,0 +1,29 @@
+#!/usr/bin/expect
+
+set hostname 10.0.22.222
+set login "modulus"
+set password "password"
+set timeout 6
+spawn telnet $hostname
+set isleep 6 
+
+expect {
+ "login:"            {send "$login\r"; exp_continue}
+ "password:"            {send "$password\r";}
+}
+  
+  send "r\r";
+  #do loop while here
+  sleep 5;
+  send "x 1,5\r"; 
+  send "r\r";
+  sleep $isleep;
+  send "x 2,5\r"; 
+  send "r\r";
+  sleep $isleep;
+  send "x 3,5\r"; 
+  send "r\r";
+  sleep $isleep;
+  send "exit\r";
+expect eof
+

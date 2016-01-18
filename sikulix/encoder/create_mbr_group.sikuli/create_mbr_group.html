@@ -1,0 +1,207 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>create_mbr_group.sikuli</h2> <a href="create_mbr_group.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Create mbr group</span>
+<span class="cmt">#This script will navigate to Group tab and start creating an mbr group</span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#inputs: mbrGroupName=[] selectConfigFile=[] selectLine=[] channelName=[] destinationIp=[] destinationPort=[] totalRate</span>
+<span class="cmt">#    mbrGroupName=[default=MBR_Group_1]</span>
+<span class="cmt">#    selectConfigFile = [default=SPTS_ATSC_ENCODER, SPTS_DVB_ENCODER, SPTS_PROXY_ENCODER]</span>
+<span class="cmt">#    selectLine = [4/1 - 4/9] currently does not support ethernet on different board</span>
+<span class="cmt">#    channelName = [default=CH1]</span>
+<span class="cmt">#    destinationIp=[default = 236.x.x.x from selectLine]</span>
+<span class="cmt">#    destinationPort=[default = 8433]</span>
+<span class="cmt">#    totalRate=[default=5.0]</span>
+<span class="cmt">#    mbrInfoOutput=[name of the file containing information about the created mbr group]</span>
+<span class="cmt">#Usage: create_mbr_group.sikuli selectLine=[] #default will create MBR_Group_1 with Ch1 @ 5Mbps with output 236.x.x.x:8433</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'selectLine'</span>)
+    Set_default_arg(<span class="str">'mbrGroupName'</span>, <span class="str">'MBR_Group_1'</span>)
+    Set_default_arg(<span class="str">'selectConfigFile'</span>, <span class="str">'SPTS_ATSC_ENCODER'</span>)
+    Set_default_arg(<span class="str">'channelName'</span>, <span class="str">'CH1'</span>)
+    Set_default_arg(<span class="str">'destinationIp'</span>, <span class="str">'236.x.x.x'</span>)
+    Set_default_arg(<span class="str">'destinationPort'</span>, <span class="str">'8433'</span>)
+    Set_default_arg(<span class="str">'totalRate'</span>, <span class="str">'5.0'</span>)
+    Set_default_arg(<span class="str">'mbrInfoOutput'</span>, os.getcwd() + <span class="str">'\\'</span> + <span class="str">'mbr_outputs.info'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+Settings.OcrTextSearch=True
+Settings.OcrTextRead=True
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Create_MBR_Group():
+    <span class="cmt">#First need to navigate to the right tab</span>
+    <span class="cmt">#auto_sikuli.exe sikuliScriptName=nav_tabs.sikuli tabName=Groups tabSubname=mbr</span>
+    Set_arg(<span class="str">'tabName'</span>, <span class="str">'Groups'</span>)
+    Set_arg(<span class="str">'tabSubName'</span>, <span class="str">'mbr'</span>)
+    RunSikuli(<span class="str">'nav_tabs'</span>)
+
+    <span class="cmt">#Create MBR Group if it is empty</span>
+    <span class="kw">if</span> exists(<img src="empty_mbr_groups.png" />):
+        <span class="skw">find</span>(<img src="CreateNewMBRGroup_button.png" />); <span class="skw">click</span>(<img src="CreateNewMBRGroup_button.png" />); <span class="skw">wait</span>(<img src="CreateOutputMuxes_windows.png" />)
+        <span class="cmt">#Entering mbrGroupName</span>
+        mygroupname = Get_arg(<span class="str">'mbrGroupName'</span>)
+        <span class="skw">click</span>(<img src="AddGroup_button.png" />); <span class="skw">wait</span>(<img src="SelectCongFile_selection.png" />)
+        <span class="cmt">#Group name is not edited in build5</span>
+        <span class="cmt">#type(mygroupname); click(Pattern("MBRGroupName_label-1.png").targetOffset(188,2))</span>
+        <span class="cmt">#Select Config file</span>
+        myconfigfile = Get_arg(<span class="str">'selectConfigFile'</span>)
+        <span class="skw">find</span>(<img src="SelectCongFile_selection.png" />); <span class="skw">doubleClick</span>(<img src="SelectCongFile_selection.png" />)
+        <span class="kw">if</span> myconfigfile.upper() == <span class="str">'SPTS_ATSC_ENCODER'</span>: <span class="skw">click</span>(<img src="SPTS_ATSC_ENCODER_Config.png" />)
+        <span class="kw">elif</span> myconfigfile.upper() == <span class="str">'SPTS_DVB_ENCODER'</span>: <span class="skw">click</span>(<img src="SPTS_DVB_ENCODER_Config.png" />)
+        <span class="kw">elif</span> myconfigfile.upper() == <span class="str">'SPTS_PROXY_ENCODER'</span>: <span class="skw">click</span>(<img src="SPTS_PROXY_ENCODER_Config.png" />)
+        <span class="kw">else</span>: Exit_program(<span class="str">'Invalid selectConfigFile entered: '</span> + myconfigfile, <span class="dig">2</span>)
+        <span class="cmt">#Select line</span>
+        myline = Get_arg(<span class="str">'selectLine'</span>)
+        <span class="skw">find</span>(<img src="Line_selection.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="Line_selection.png" />).targetOffset(<span class="dig">0</span>,<span class="dig">30</span>))
+        <span class="kw">if</span> myline == <span class="str">'4/3'</span>: <span class="skw">click</span>(Pattern(<img src="43_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/4'</span>: <span class="skw">click</span>(Pattern(<img src="44_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/5'</span>: <span class="skw">click</span>(Pattern(<img src="45_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/6'</span>: <span class="skw">click</span>(Pattern(<img src="46_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/7'</span>: <span class="skw">click</span>(Pattern(<img src="47_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/8'</span>: <span class="skw">click</span>(Pattern(<img src="48_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/9'</span>: <span class="skw">click</span>(Pattern(<img src="49_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">elif</span> myline == <span class="str">'4/10'</span>: <span class="skw">click</span>(Pattern(<img src="410_line.png" />).similar(<span class="dig">0.80</span>))
+        <span class="kw">else</span>: Exit_program(<span class="str">'Invalid selectLine entered: '</span> + myline, <span class="dig">2</span>)
+        <span class="cmt">#Entering channel name</span>
+        mych = Get_arg(<span class="str">'channelName'</span>)
+        <span class="skw">find</span>(Pattern(<img src="Name_selection.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">doubleClick</span>(Pattern(<img src="Name_selection.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">0</span>,<span class="dig">30</span>)); <span class="skw">doubleClick</span>(Pattern(<img src="Name_selection.png" />).similar(<span class="dig">0.80</span>).targetOffset(<span class="dig">0</span>,<span class="dig">30</span>)); <span class="skw">type</span>(mych); <span class="skw">type</span>(Key.ENTER)
+        <span class="cmt">#Entering destination ip</span>
+        <span class="cmt">#First find out what is the ip of the current ethernet line</span>
+        findtext = <span class="skw">find</span>(<img src="Line_selection_long-1.png" />).below(<span class="dig">40</span>).text()
+        my_match = re.search(<span class="str">r'.+\((.+)\)'</span>, findtext)
+        <span class="kw">if</span> <span class="kw">not</span> my_match:
+            Exit_program(<span class="str">'Failed to read ethernet line.'</span>, <span class="dig">1</span>)
+        <span class="kw">else</span>:
+            myeth = my_match.group(<span class="dig">1</span>).replace(<span class="str">' '</span>, <span class="str">''</span>)
+            Print_debug(<span class="str">'Found ethernet line address: '</span> + myeth )
+            <span class="cmt">#extracting the octets</span>
+            myoctets = myeth.split(<span class="str">'.'</span>)
+            <span class="kw">if</span> len(myoctets) != <span class="dig">4</span>: Exit_program(<span class="str">'Ethernet line is read wrong.'</span>)
+        <span class="cmt">#Second, get destination address</span>
+        mydest = Get_arg(<span class="str">'destinationIp'</span>)
+        destoctets = mydest.split(<span class="str">'.'</span>)
+        <span class="kw">if</span> len(destoctets) != <span class="dig">4</span>: Exit_program(<span class="str">'destinationIp is not valid: '</span> + mydest)
+        <span class="kw">if</span> <span class="kw">not</span> (int(destoctets[<span class="dig">0</span>]) &lt; <span class="dig">255</span> <span class="kw">and</span> int(destoctets[<span class="dig">0</span>]) &gt; <span class="dig">224</span>): Exit_program(<span class="str">'Invalid destinationIp range is entered: '</span> + mydest)
+        <span class="kw">for</span> i <span class="kw">in</span> xrange(<span class="dig">1</span>, len(destoctets)):
+            destoctets[i] = destoctets[i].replace(<span class="str">'x'</span>, myoctets[i])
+        mydest = destoctets[<span class="dig">0</span>]+ <span class="str">'.'</span> + destoctets[<span class="dig">1</span>] + <span class="str">'.'</span> + destoctets[<span class="dig">2</span>] + <span class="str">'.'</span> + destoctets[<span class="dig">3</span>]
+        Print_debug(<span class="str">'Final destinationIp: '</span> + mydest)
+        <span class="skw">find</span>(<img src="DestinationIp_selection.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="DestinationIp_selection.png" />).targetOffset(-<span class="dig">60</span>,<span class="dig">30</span>)); <span class="skw">doubleClick</span>(Pattern(<img src="DestinationIp_selection.png" />).targetOffset(-<span class="dig">60</span>,<span class="dig">30</span>)); <span class="skw">type</span>(mydest); <span class="skw">type</span>(Key.ENTER)
+        <span class="cmt">#Entering destination port</span>
+        myport = Get_arg(<span class="str">'destinationPort'</span>)
+        <span class="skw">find</span>(<img src="UDPPort_selection.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="UDPPort_selection.png" />).targetOffset(<span class="dig">0</span>,<span class="dig">30</span>)); <span class="skw">type</span>(myport); <span class="skw">type</span>(Key.ENTER)
+        <span class="cmt">#Entering total rate</span>
+        myrate = Get_arg(<span class="str">'totalRate'</span>)
+        <span class="skw">find</span>(<img src="TotalRate_selection.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="TotalRate_selection.png" />).targetOffset(<span class="dig">0</span>,<span class="dig">30</span>)); <span class="skw">doubleClick</span>(Pattern(<img src="TotalRate_selection.png" />).targetOffset(<span class="dig">0</span>,<span class="dig">30</span>)); <span class="skw">type</span>(myrate); <span class="skw">type</span>(Key.ENTER)
+        <span class="cmt">#Apply changes</span>
+        <span class="skw">find</span>(<img src="mbr_ok_cancel_buttons.png" />); <span class="skw">click</span>(Pattern(<img src="mbr_ok_cancel_buttons.png" />).targetOffset(-<span class="dig">36</span>,<span class="dig">3</span>))
+        <span class="kw">if</span> exists(<img src="mbr_warning.png" />):
+            Capture_screen()
+            <span class="skw">find</span>(Pattern(<img src="warning_ok_button.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">click</span>(Pattern(<img src="warning_ok_button.png" />).similar(<span class="dig">0.80</span>))
+            <span class="skw">find</span>(<img src="mbr_ok_cancel_buttons.png" />); <span class="skw">click</span>(Pattern(<img src="mbr_ok_cancel_buttons.png" />).targetOffset(<span class="dig">39</span>,<span class="dig">1</span>))
+            Exit_program(<span class="str">'Failed to create MBR Group: '</span> + mygroupname)
+        <span class="kw">else</span>:
+            Print_debug(<span class="str">'MBR Group created successfully: '</span> + mygroupname)
+            <span class="cmt">#Creating mbr_outputs.info file</span>
+            mbrfile = Get_arg(<span class="str">'mbrInfoOutput'</span>)
+            target = open(mbrfile, <span class="str">'w'</span>)
+            target.write(<span class="str">'mbrGroupName='</span> + mygroupname + <span class="str">'\n'</span>)
+            target.write(<span class="str">'destinationIp='</span> + mydest + <span class="str">'\n'</span>)
+            target.write(<span class="str">'destinationPort='</span> + myport + <span class="str">'\n'</span>)
+            target.close()
+
+
+
+
+
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Create_MBR_Group()
+</pre>
+</body>
+</html>

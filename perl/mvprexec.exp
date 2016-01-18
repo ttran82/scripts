@@ -1,0 +1,17 @@
+#!/usr/bin/expect
+
+set hostname [lindex $argv 0]
+set command [lindex $argv 1]
+set port 22
+set login "root"
+set password "password"
+set timeout 6
+
+spawn ssh $login@$hostname -p $port $command
+
+expect {
+ "(yes/no)?"            {send "yes\r"; exp_continue}
+ "password:"            {send "$password\r";}
+}
+expect eof
+

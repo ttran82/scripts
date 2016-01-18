@@ -1,0 +1,161 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>upgrade_via_ssh.sikuli</h2> <a href="upgrade_via_ssh.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#upgrade ME7000 via ssh session</span>
+<span class="cmt">#inputs: encIP=[] loginId=[] password=[] targetVersion=[]</span>
+<span class="cmt">#Usage: upgrade_via_ssh.sikuli targetVersion=me7k.1.0.1.1</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> check_args():
+    <span class="kw">if</span> os.environ.get(<span class="str">'encIP'</span>) == <span class="str">""</span>:
+        <span class="kw">print</span> <span class="str">"Enc IP is not given."</span>
+        exit(<span class="dig">1</span>)
+    <span class="kw">if</span> os.environ.get(<span class="str">'loginID'</span>) == <span class="str">""</span>:
+        <span class="kw">print</span> <span class="str">"Ssh loginID is not given.  Will use default loginid: root"</span>
+        os.environ[<span class="str">'loginID'</span>]=<span class="str">'root'</span>
+    <span class="kw">if</span> os.environ.get(<span class="str">'password'</span>) == <span class="str">""</span>:
+        <span class="kw">print</span> <span class="str">"Ssh password is not given.  Will use default password: Arri$2015"</span>
+        os.environ[<span class="str">'password'</span>]=<span class="str">'Arri$2015'</span>
+    <span class="kw">if</span> os.environ.get(<span class="str">'targetVersion'</span>) == <span class="str">""</span>:
+        <span class="kw">print</span> <span class="str">"Target version is not given.  Will use default version: NeoCCBuild"</span>
+        os.environ[<span class="str">'targetVersion'</span>]=<span class="str">'NeoCCBuild'</span>
+
+check_args()
+
+<span class="cmt">#Main code start here</span>
+<span class="cmt">#Any global variables here</span>
+program_exit = <span class="dig">0</span>
+
+<span class="cmt">#first close any opening java client</span>
+javaME7000MainTitle = <span class="str">'ME-7000 - '</span> + str(Get_arg(<span class="str">'encIp'</span>)) + <span class="str">' - '</span> + str(Get_arg(<span class="str">'encGuiLogin'</span>))
+mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000MainTitle + <span class="str">'\" windows_action=-1'</span>
+Run_cmd(mycmd)
+
+login_title = <span class="str">"Please login ME7000"</span>
+mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + login_title + <span class="str">'\" windows_action=-1'</span>
+Run_cmd(mycmd)
+
+openApp(<span class="str">"putty.exe"</span>)
+
+<span class="skw">wait</span>(<img src="1435273178324.png" />, <span class="dig">4</span>)
+<span class="skw">click</span>(<img src="1435273178324.png" />)
+
+<span class="skw">type</span>(os.environ.get(<span class="str">'ENCIP'</span>))
+<span class="skw">click</span>(<img src="1435273214387.png" />)
+<span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">wait</span>(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>).targetOffset(<span class="dig">101</span>,-<span class="dig">6</span>), <span class="dig">3</span>); <span class="skw">click</span>(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(os.environ.get(<span class="str">'loginId'</span>)); <span class="skw">type</span>(Key.ENTER)
+<span class="skw">type</span>(os.environ.get(<span class="str">'password'</span>)); <span class="skw">type</span>(Key.ENTER)
+<span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"update"</span>); <span class="skw">type</span>(Key.ENTER)
+<span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"update -s -h "</span> + os.environ.get(<span class="str">'updateServer'</span>) + <span class="str">" -d /dvs/build/"</span> + os.environ.get(<span class="str">'targetVersion'</span>)); <span class="skw">type</span>(Key.ENTER)
+
+<span class="skw">sleep</span>(<span class="dig">15</span>)
+<span class="skw">wait</span>(Pattern(<img src="1435286654024.png" />).similar(<span class="dig">0.90</span>), <span class="dig">10</span>); <span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"q"</span>); <span class="skw">sleep</span>(<span class="dig">1</span>)
+<span class="skw">type</span>(<span class="str">"y"</span>); <span class="skw">type</span>(Key.ENTER)
+
+<span class="skw">wait</span>(Pattern(<img src="1438126619466.png" />).similar(<span class="dig">0.90</span>), <span class="dig">300</span>)
+
+upgrade_finish = <span class="skw">find</span>(Pattern(<img src="1438126619466.png" />).similar(<span class="dig">0.90</span>))
+<span class="kw">if</span> upgrade_finish:
+    <span class="skw">type</span>(<span class="str">"stopfarmer; rm /dataflash/Log/Alarm*; sync; reboot"</span>); <span class="skw">type</span>(Key.ENTER)
+    <span class="skw">sleep</span>(<span class="dig">4</span>)
+    <span class="skw">type</span>(Key.ENTER)
+    <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(<img src="1436234342034.png" />,<span class="dig">5</span>): <span class="skw">find</span>(<img src="1435287436133.png" />); <span class="skw">click</span>(<img src="1435287436133.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>).targetOffset(<span class="dig">101</span>,-<span class="dig">6</span>)): <span class="skw">click</span>(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>).targetOffset(<span class="dig">103</span>,-<span class="dig">6</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">if</span> exists(<img src="1435287395464.png" />): <span class="skw">click</span>(<img src="1435287436133.png" />); <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>)): <span class="skw">click</span>(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>).targetOffset(<span class="dig">101</span>,-<span class="dig">3</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    waitVanish(Pattern(<img src="putty_corner.png" />).similar(<span class="dig">0.90</span>))
+
+<span class="kw">else</span>:
+    program_exit = <span class="dig">1</span>
+
+exit(program_exit)
+</pre>
+</body>
+</html>

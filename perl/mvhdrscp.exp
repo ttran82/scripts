@@ -1,0 +1,14 @@
+#!/usr/bin/expect
+
+set source [lindex $argv 0]
+set target [lindex $argv 1]
+set timeout 2
+
+spawn scp $source $target
+
+expect {
+ "(yes/no)?"            {send "yes\r"; exp_continue}
+ "password:"            {send "password\r"}
+}
+expect eof
+

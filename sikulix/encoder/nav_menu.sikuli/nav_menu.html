@@ -1,0 +1,139 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>nav_menu.sikuli</h2> <a href="nav_menu.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run Navigate the Main menu </span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#inputs: menuName menuSubName</span>
+<span class="cmt">#    menuName = User:Admin, Tools, Help</span>
+<span class="cmt">#    menuSubName =</span>
+<span class="cmt">#        User:Admin-&gt;Permissions, Preferences, Logout</span>
+<span class="cmt">#        Tools-&gt;Licenses, Reboot, Refresh</span>
+<span class="cmt">#        Help-&gt;Logs, Help, About, Sessions</span>
+<span class="cmt">#Usage: nav_menu.sikuli menuName=[] menuSubName=[]</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'menuName'</span>)
+    Check_arg(<span class="str">'menuSubName'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Nav_MainMenu():
+    Main_gui(<span class="dig">2</span>)
+    <span class="kw">if</span> <span class="skw">find</span>(<img src="1437001195717.png" />):
+        <span class="cmt">#found main menu</span>
+        my_menu = Get_arg(<span class="str">'menuName'</span>)
+        my_submenu = Get_arg(<span class="str">'menuSubName'</span>)
+        <span class="cmt">#This is for User:Admin menu</span>
+        <span class="kw">if</span> my_menu == <span class="str">'User\:Admin'</span>:
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(-<span class="dig">51</span>,<span class="dig">0</span>))
+        <span class="cmt">#This is for Tools menu</span>
+        <span class="kw">elif</span> my_menu == <span class="str">'Tools'</span>:
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(<span class="dig">18</span>,-<span class="dig">1</span>))
+        <span class="cmt">#This is for Help menu</span>
+        <span class="kw">elif</span> my_menu == <span class="str">'Help'</span>:
+            <span class="skw">click</span>(Pattern(<img src="1437001195717.png" />).targetOffset(<span class="dig">65</span>,-<span class="dig">1</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+            <span class="skw">wait</span>(<img src="1437001280269.png" />)
+            <span class="kw">if</span> my_submenu == <span class="str">'Logs'</span>:
+                <span class="skw">click</span>(Pattern(<img src="1437001280269.png" />).targetOffset(-<span class="dig">8</span>,-<span class="dig">25</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+            <span class="kw">elif</span> my_submenu == <span class="str">'Help'</span>:
+                <span class="skw">click</span>(Pattern(<img src="1437001280269.png" />).targetOffset(-<span class="dig">8</span>,<span class="dig">0</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+            <span class="kw">elif</span> my_submenu == <span class="str">'About'</span>:
+                <span class="skw">click</span>(Pattern(<img src="1437001280269.png" />).targetOffset(-<span class="dig">4</span>,<span class="dig">25</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+            <span class="kw">elif</span> my_submenu == <span class="str">'Sessions'</span>:
+                <span class="skw">click</span>(Pattern(<img src="1437001280269.png" />).targetOffset(-<span class="dig">1</span>,<span class="dig">51</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+            <span class="kw">else</span>:
+                Print_text(<span class="str">'Wrong submenu: '</span> + my_submenu)
+        <span class="kw">else</span>:
+            Print_text(<span class="str">'Wong menu: '</span> + my_menu)
+    <span class="cmt">#wrong menu name    </span>
+    <span class="kw">else</span>:
+        Print_text(<span class="str">'Failed to look for main menu.'</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Nav_MainMenu()
+</pre>
+</body>
+</html>

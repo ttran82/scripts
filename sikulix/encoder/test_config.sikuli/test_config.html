@@ -1,0 +1,154 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>test_config.sikuli</h2> <a href="test_config.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="kw">def</span> Configure_Resolution():
+    outputResolutionDict = {
+    <span class="cmt">#50Hz</span>
+    <span class="str">'1920x1080i25'</span>:<img src="1920x1080i25_select-1.png" />, <span class="str">'1440x1080i25'</span>:<img src="1440x1080i25_select.png" />, <span class="str">'1280x1080i25'</span>:<img src="1280x1080i25_selection-1.png" />, <span class="str">'960x1080i25'</span>:<img src="960x1080i25_select.png" />,
+    <span class="str">'1280x720p50'</span>:<img src="1280x720p50_select.png" />, <span class="str">'960x720p50'</span>:<img src="1442123106003.png" />,
+    <span class="str">'720x576i25'</span>:<img src="720x576i25_select.png" />,<span class="str">'704x576i25'</span>:<img src="704x576i25_select.png" />,<span class="str">'640x576i25'</span>:<img src="640x576i25_select.png" />,<span class="str">'544x576i25'</span>:<img src="544x576i25_select.png" />,<span class="str">'528x576i25'</span>:<img src="528x576i25_select.png" />,<span class="str">'480x576i25'</span>:<img src="480x576i25_select.png" />,<span class="str">'352x576i25'</span>:<img src="352x576i25_select.png" />,
+    <span class="cmt">#50Hz MBR exclusive</span>
+    <span class="str">'1920x1080p50'</span>:<img src="1920x1080p50_select.png" />, <span class="str">'1440x1080p50'</span>:<img src="1440x1080p50_select.png" />, <span class="str">'1280x1080p50'</span>:<img src="1280x1080p50_select.png" />, <span class="str">'960x1080p50'</span>:<img src="960x1080p50_select.png" />,
+    <span class="str">'720x576p50'</span>:<img src="720x576p50_select.png" />, <span class="str">'704x576p50'</span>:<img src="704x576p50_select.png" />, <span class="str">'640x576p50'</span>:<img src="640x576p50_select.png" />, <span class="str">'544x576p50'</span>:<img src="544x576p50_select.png" />, <span class="str">'528x576p50'</span>:<img src="528x576p50_select.png" />, <span class="str">'480x576p50'</span>:<img src="480x576p50_select.png" />, <span class="str">'352x576p50'</span>:<img src="352x576p50_select.png" />,
+    <span class="str">'1920x1080p25'</span>:<img src="1920x1080p25_select.png" />, <span class="str">'1440x1080p25'</span>:<img src="1440x1080p25_select.png" />, <span class="str">'1280x1080p25'</span>:<img src="1280x1080p25_select.png" />, <span class="str">'960x1080p25'</span>:<img src="960x1080p25_select.png" />,
+    <span class="str">'1280x720p25'</span>:<img src="1280x720p25_select.png" />, <span class="str">'1024x576p25'</span>:<img src="1024x576p25_select.png" />, <span class="str">'720x576p25'</span>:<img src="720x576p25_select.png" />, <span class="str">'704x576p25'</span>:<img src="704x576p25_select.png" />,
+    <span class="str">'960x544p25'</span>:<img src="960x544p25_select.png" />, <span class="str">'720x544p25'</span>:<img src="720x544p25_select.png" />, <span class="str">'960x540p25'</span>:<img src="960x540p25_select.png" />, <span class="str">'720x540p25'</span>:<img src="720x540p2S_select.png" />,
+    <span class="str">'854x480p25'</span>:<img src="854x480p25_select.png" />, <span class="str">'720x480p25'</span>:<img src="720x480p25_select.png" />, <span class="str">'704x480p25'</span>:<img src="704x480p25_select.png" />, <span class="str">'640x480p25'</span>:<img src="640x480p25_select.png" />, <span class="str">'544x480p25'</span>:<img src="544x480p2S_select.png" />, <span class="str">'528x480p25'</span>:<img src="528x480p25_select.png" />,
+    <span class="str">'800x450p25'</span>:<img src="800x450p25_select.png" />, <span class="str">'768x432p25'</span>:<img src="768x432p25_select.png" />, <span class="str">'720x408p25'</span>:<img src="720x408p25_select.png" />, <span class="str">'544x408p25'</span>:<img src="544x408p25_select.png" />, <span class="str">'720x404p25'</span>:<img src="720x404p25_select.png" />, <span class="str">'704x396p25'</span>:<img src="704x396p25_select.png" />,
+    <span class="str">'640x360p25'</span>:<img src="540x360p25_select.png" />, <span class="str">'480x360p25'</span>:<img src="480x360p25_select.png" />, <span class="str">'448x336p25'</span>:<img src="448x336p25_select.png" />, <span class="str">'480x320p25'</span>:<img src="480x320p25_select.png" />, <span class="str">'352x320p25'</span>:<img src="352x320p25_select.png" />, <span class="str">'400x300p25'</span>:<img src="400x300p25_select.png" />,
+    <span class="str">'512x288p25'</span>:<img src="512x288p25_select.png" />, <span class="str">'384x288p25'</span>:<img src="384x288p25_select.png" />, <span class="str">'480x272p25'</span>:<img src="480x272p25_select.png" />, <span class="str">'480x270p25'</span>:<img src="480x270p25_select.png" />, <span class="str">'480x244p25'</span>:<img src="480x244p25_select.png" />,
+    <span class="str">'360x240p25'</span>:<img src="360x240p25_select.png" />, <span class="str">'320x240p25'</span>:<img src="320x240p25_select.png" />, <span class="str">'400x224p25'</span>:<img src="400x224p25_select.png" />, <span class="str">'384x216p25'</span>:<img src="384x216p25_select.png" />,
+    <span class="str">'720x576p12.5'</span>:<img src="720x576p125_select.png" />, <span class="str">'720x544p12.5'</span>:<img src="720x544p125_select.png" />, <span class="str">'720x540p12.5'</span>:<img src="720x540p125_select.png" />,
+    <span class="str">'720x480p12.5'</span>:<img src="720x480p125_select.png" />, <span class="str">'704x480p12.5'</span>:<img src="704x480p125_select.png" />, <span class="str">'640x480p12.5'</span>:<img src="640x480p125_select.png" />, <span class="str">'544x480p12.5'</span>:<img src="544x480p125_select.png" />, <span class="str">'528x480p12.5'</span>:<img src="528x480p125_select.png" />,
+    <span class="str">'720x408p12.5'</span>:<img src="720x408p125_select.png" />, <span class="str">'544x408p12.5'</span>:<img src="544x408p125_select.png" />, <span class="str">'720x404p12.5'</span>:<img src="720x404p125_select.png" />, <span class="str">'704x396p12.5'</span>:<img src="704x396p125_select.png" />, <span class="str">'640x360p12.5'</span>:<img src="640x360p125_select.png" />, <span class="str">'480x360p12.5'</span>:<img src="480x360p125_select.png" />,
+    <span class="str">'448x336p12.5'</span>:<img src="448x336p125_select.png" />, <span class="str">'480x320p12.5'</span>:<img src="480x320p125_select.png" />, <span class="str">'352x320p12.5'</span>:<img src="352x320p125_select.png" />, <span class="str">'400x300p12.5'</span>:<img src="400x300p125_select.png" />, <span class="str">'512x288p12.5'</span>:<img src="512x288p125_select.png" />, <span class="str">'384x288p12.5'</span>:<img src="384x288p125_select.png" />,
+    <span class="str">'480x272p12.5'</span>:<img src="480x272p125_select.png" />, <span class="str">'480x270p12.5'</span>:<img src="480x270p125_select.png" />, <span class="str">'480x244p12.5'</span>:<img src="480x244p125_select.png" />, <span class="str">'360x240p12.5'</span>:<img src="360x240p125_select.png" />, <span class="str">'320x240p12.5'</span>:<img src="320x240p125_select.png" />,
+    <span class="str">'400x224p12.5'</span>:<img src="400x224p125_select.png" />, <span class="str">'384x216p12.5'</span>:<img src="384x216p125_select.png" />,
+    <span class="cmt">#60Hz</span>
+    <span class="str">'1920x1080i29.97'</span>:<img src="1920x1080i2997_select.png" />,<span class="str">'1440x1080i29.97'</span>:<img src="1440x1080i2997_select.png" />,<span class="str">'1280x1080i29.97'</span>:<img src="1280x1080i2997_select.png" />,<span class="str">'960x1080i29.97'</span>:<img src="960x1080i2997_select.png" />,
+    <span class="str">'1280x720p59.94'</span>:<img src="1280x720pS994_select.png" />, <span class="str">'960x720p59.94'</span>:<img src="960x720p5994_select.png" />,
+    <span class="str">'720x480i29.97'</span>:<img src="720x480i2997_sel2-1.png" />,<span class="str">'704x480i29.97'</span>:<img src="704x480i2997_select.png" />,<span class="str">'640x480i29.97'</span>:<img src="640x480i2997_select.png" />,<span class="str">'544x480i29.97'</span>:<img src="544x480i2997_select.png" />,<span class="str">'528x480i29.97'</span>:<img src="528x480i2997_sel-1.png" />,<span class="str">'480x480i29.97'</span>:<img src="480x480i2997_select.png" />,<span class="str">'352x480i29.97'</span>:<img src="352x480i2997_select.png" />,
+    <span class="cmt">#60Hz MBR exclusive</span>
+    <span class="str">'1920x1080p59.94'</span>:<img src="1920x1080p59_select.png" />, <span class="str">'1440x1080p59.94'</span>:<img src="1440x1080p59_select.png" />, <span class="str">'1280x1080p59.94'</span>:<img src="1280x1080p59_select.png" />, <span class="str">'960x1080p59.94'</span>:<img src="960x1080p59_select.png" />,
+    <span class="str">'720x480p59.94'</span>:<img src="720x480p5994_select-1.png" />,<span class="str">'704x480p59.94'</span>:<img src="704x480p5994_select-1.png" />,<span class="str">'640x480p59.94'</span>:<img src="640x480p5994_select-1.png" />,<span class="str">'544x480p59.94'</span>:<img src="544x480p5994_select-1.png" />,<span class="str">'528x480p59.94'</span>:<img src="528x480p5994_select-1.png" />,<span class="str">'480x480p59.94'</span>:<img src="480x480p5994_select-1.png" />,<span class="str">'352x480p59.94'</span>:<img src="352x480p5994_select-1.png" />,
+    <span class="str">'1920x1080p29.97'</span>:<img src="1920x1080p29_select.png" />, <span class="str">'1440x1080p29.97'</span>:<img src="1440x1080p29_select.png" />, <span class="str">'1280x1080p29.97'</span>:<img src="1280x1080p29_select.png" />, <span class="str">'960x1080p29.97'</span>:<img src="960x1080p29_select.png" />,
+    <span class="str">'1280x720p29.97'</span>:<img src="1280x720p29_select.png" />, <span class="str">'720x576p29.97'</span>:<img src="720x576p29_select.png" />, <span class="str">'960x544p29.97'</span>:<img src="960x544p29_select.png" />, <span class="str">'720x544p29.97'</span>:<img src="720x544p29_select.png" />, <span class="str">'960x540p29.97'</span>:<img src="960x540p29_select.png" />,
+    <span class="str">'854x480p29.97'</span>:<img src="854x480p2997_select.png" />, <span class="str">'720x480p29.97'</span>:<img src="720x480p2997_select.png" />, <span class="str">'704x480p29.97'</span>:<img src="704x480p2997_select.png" />, <span class="str">'640x480p29.97'</span>:<img src="640x480p2997_select.png" />, <span class="str">'544x480p29.97'</span>:<img src="544x480p2997_select.png" />, <span class="str">'528x480p29.97'</span>:<img src="528x480p2997_select.png" />,
+    <span class="str">'800x450p29.97'</span>:<img src="800x450p2997_select.png" />, <span class="str">'768x432p29.97'</span>:<img src="768x432p2997_select.png" />,
+    <span class="str">'720x408p29.97'</span>:<img src="720x408p2997_select.png" />, <span class="str">'704x396p29.97'</span>:<img src="704x396p2997_select.png" />, <span class="str">'640x360p29.97'</span>:<img src="640x360p2997_select.png" />, <span class="str">'480x360p29.97'</span>:<img src="480x360p2997_select.png" />, <span class="str">'448x336p29.97'</span>:<img src="448x336p2997_select.png" />, <span class="str">'480x320p29.97'</span>:<img src="480x320p2997_select.png" />,
+    <span class="str">'352x320p29.97'</span>:<img src="352x320p2997_select.png" />, <span class="str">'512x288p29.97'</span>:<img src="512x288p2997_select.png" />, <span class="str">'384x288p29.97'</span>:<img src="384x288p2997_select.png" />, <span class="str">'480x272p29.97'</span>:<img src="480x272p2997_select.png" />, <span class="str">'480x270p29.97'</span>:<img src="480x270p2997_select.png" />, <span class="str">'480x244p29.97'</span>:<img src="480x244p2997_select.png" />,
+    <span class="str">'360x240p29.97'</span>:<img src="360x240p2997_select.png" />, <span class="str">'320x240p29.97'</span>:<img src="320x240p2997_select.png" />, <span class="str">'384x216p29.97'</span>:<img src="384x216p2997_select.png" />,
+    <span class="str">'720x480p14.98'</span>:<img src="720x480p1498_select.png" />, <span class="str">'704x480p14.98'</span>:<img src="704x480p1498_select.png" />, <span class="str">'640x480p14.98'</span>:<img src="640x480p1498_select.png" />, <span class="str">'544x480p14.98'</span>:<img src="544x480p1498_select.png" />, <span class="str">'528x480p14.98'</span>:<img src="528x480p1498_select.png" />, <span class="str">'720x408p14.98'</span>:<img src="720x408p1498_select.png" />,
+    <span class="str">'704x396p14.98'</span>:<img src="704x396p1498_select.png" />, <span class="str">'640x360p14.98'</span>:<img src="640x360p1498_select.png" />, <span class="str">'480x360p14.98'</span>:<img src="480x360p1498_select.png" />, <span class="str">'448x336p14.98'</span>:<img src="448x336p1498_select.png" />, <span class="str">'480x320p14.98'</span>:<img src="480x320p1498_select.png" />, <span class="str">'352x320p14.98'</span>:<img src="352x320p1498_select.png" />,
+    <span class="str">'512x288p14.98'</span>:<img src="512x288p1498_select.png" />, <span class="str">'384x288p14.98'</span>:<img src="384x288p1498_select.png" />, <span class="str">'480x272p14.98'</span>:<img src="480x272p1498_select.png" />, <span class="str">'480x270p14.98'</span>:<img src="480x270p1498_select.png" />, <span class="str">'480x244p14.98'</span>:<img src="480x244p1498_select.png" />, <span class="str">'360x240p14.98'</span>:<img src="360x240p1498_select.png" />,
+    <span class="str">'320x240p14.98'</span>:<img src="320x240p1498_select.png" />, <span class="str">'384x216p14.98'</span>:<img src="384x216p1498_select.png" />,
+    }
+    <span class="cmt">#myres = Get_arg('resolution')</span>
+    myres = <span class="str">'384x216p12.5'</span>
+    <span class="cmt">#myres = '352x480i29.97'</span>
+    <span class="kw">if</span> myres:
+        <span class="kw">if</span> outputResolutionDict.has_key(myres):
+            <span class="skw">find</span>(<img src="Resolution_label-2.png" />); <span class="skw">click</span>(Pattern(<img src="Resolution_label-2.png" />).targetOffset(<span class="dig">66</span>,-<span class="dig">1</span>))
+            myresimg = outputResolutionDict.get(myres)
+            findresimg =  exists(Pattern(myresimg).exact())
+            <span class="cmt">#try to find 4 more times</span>
+            <span class="kw">if</span> <span class="kw">not</span> findresimg:
+                <span class="cmt">#If selection span more than a whole selection, put it back on top</span>
+                <span class="kw">if</span> exists(Pattern(<img src="expand_bar-1.png" />).similar(<span class="dig">0.90</span>)):
+                    <span class="kw">print</span>(<span class="str">'I am right here'</span>)
+                    <span class="skw">dragDrop</span>(<img src="middle_bar_for_drag-1.png" />, Pattern(<img src="expand_bar-1.png" />).similar(<span class="dig">0.90</span>))
+                    findresimg =  exists(Pattern(myresimg).exact())
+                    <span class="kw">while</span> <span class="kw">not</span> findresimg:
+                        <span class="cmt">#if exists(Pattern("bar_down-1.png").exact()): click(Pattern("bar_down-1.png").exact().targetOffset(0,-12)); findresimg =  exists(Pattern(myresimg).exact())   </span>
+                        <span class="kw">if</span> exists(Pattern(<img src="down_arrow_for_clicking.png" />).exact()): <span class="skw">click</span>(Pattern(<img src="down_arrow_for_clicking.png" />).exact().targetOffset(<span class="dig">0</span>,-<span class="dig">7</span>)); findresimg =  exists(Pattern(myresimg).exact())
+                        <span class="kw">else</span>: <span class="kw">break</span>;
+                    <span class="kw">if</span> findresimg:
+                        <span class="kw">print</span>(<span class="str">'Found resolution: '</span> + myres)
+                        <span class="skw">click</span>(Pattern(myresimg).exact())
+                    <span class="kw">else</span>:
+                        <span class="cmt">#Cancel_VideoProperties()</span>
+                        <span class="kw">print</span>(<span class="str">'Failed to find resolution: '</span> + myres, <span class="dig">1</span>)
+
+                <span class="kw">else</span>:
+                    <span class="cmt">#Cancel_VideoProperties()</span>
+                    <span class="kw">print</span>(<span class="str">'Failed to set resolution: '</span> + myres, <span class="dig">1</span>)
+            <span class="kw">else</span>:
+                <span class="kw">print</span>(<span class="str">'Found resolution: '</span> + myres)
+                <span class="skw">click</span>(Pattern(myresimg).similar(<span class="dig">0.80</span>))
+        <span class="kw">else</span>:
+            <span class="cmt">#Cancel_VideoProperties()</span>
+            <span class="kw">print</span>(<span class="str">'Unregconized output resolution enter: '</span> + myres, <span class="dig">2</span>)
+
+Configure_Resolution()
+</pre>
+</body>
+</html>

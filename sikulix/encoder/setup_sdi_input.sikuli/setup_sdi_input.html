@@ -1,0 +1,238 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>setup_sdi_input.sikuli</h2> <a href="setup_sdi_input.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Setup SDI input front-end</span>
+<span class="cmt">#This routine assume the gui has to be under Mux tab already</span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#inputs: required: boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; portEnable=&lt;0/1&gt; </span>
+<span class="cmt">#inputs: optional: videoFormat=[] scte104Extraction =[0/1]afdOption=[] </span>
+<span class="cmt">#inputs: optional: audio=[1=PCM, 2=DD, 3=DD+, etc]</span>
+<span class="cmt">#Usage: set_sdi.sikuli  boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; portEnable=&lt;0/1&gt;</span>
+<span class="cmt">#Usage: set_sdi.sikuli  boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; portEnable=&lt;0/1&gt; ...</span>
+<span class="cmt">#Usage: set_sdi.sikuli  boardNum=&lt;1..3&gt; sdiPort=&lt;1..8&gt; portEnable=&lt;1&gt; audio="1=DD, 2=PCM"</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'boardNum'</span>)
+    my_board = Get_arg(<span class="str">'boardNum'</span>)
+    <span class="kw">if</span> int(my_board) &lt; <span class="dig">1</span> <span class="kw">or</span> int(my_board) &gt; <span class="dig">3</span>:
+        Exit_program(<span class="str">'Invalid boardNum not in range [1..3]: '</span> + my_board, <span class="dig">2</span>)
+    Check_arg(<span class="str">'sdiPort'</span>)
+    my_port = Get_arg(<span class="str">'sdiPort'</span>)
+    <span class="kw">if</span> int(my_port) &lt; <span class="dig">1</span> <span class="kw">or</span> int(my_port) &gt; <span class="dig">8</span>:
+        Exit_program(<span class="str">'Invalid sdiPort not in range [1..8]: '</span> + my_port, <span class="dig">2</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+my_board = Get_arg(<span class="str">'boardNum'</span>)
+my_port = Get_arg(<span class="str">'sdiPort'</span>)
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Port_Enable():
+    <span class="str">'''Enable/disable the sdi port
+    '''</span>
+    my_portstatus = <span class="dig">0</span>
+    <span class="cmt">#Check to see if the sdi port is on/off</span>
+    <span class="kw">if</span> exists(Pattern(<img src="1437541744228.png" />).exact()):
+        <span class="cmt">#sdi port is disabled</span>
+        Print_debug(<span class="str">'sdi port is currently disabled.'</span>)
+    <span class="kw">if</span> exists(Pattern(<img src="1437541808778.png" />).exact()):
+        my_portstatus = <span class="dig">1</span>
+        Print_debug(<span class="str">'sdi port is currently enabled.'</span>)
+
+    <span class="cmt">#Now trying to enable the port if the argument is asking for it</span>
+    <span class="kw">if</span> Get_arg(<span class="str">'PortEnable'</span>):
+        my_portenable = int(Get_arg(<span class="str">'PortEnable'</span>))
+        <span class="cmt">#Turning off the port.  If is is already off, do nothing.  Ortherwise, turn it off</span>
+        <span class="kw">if</span> my_portenable == <span class="dig">0</span>:
+            <span class="kw">if</span> my_portstatus == <span class="dig">0</span>:
+                Print_debug(<span class="str">'Nothing to do.'</span>)
+            <span class="kw">else</span>:
+                <span class="skw">find</span>(Pattern(<img src="1437541808778.png" />).exact())
+                <span class="skw">click</span>(Pattern(<img src="1437541808778.png" />).exact().targetOffset(-<span class="dig">34</span>,<span class="dig">0</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+        <span class="cmt">#Turning on the port.  If is is already turn on, do nothing.  Ortherwise, turn it on.</span>
+        <span class="kw">elif</span> my_portenable == <span class="dig">1</span>:
+            <span class="kw">if</span> my_portstatus == <span class="dig">0</span>:
+                <span class="cmt">#Need to turn it on</span>
+                <span class="skw">find</span>(Pattern(<img src="1437541744228.png" />).exact())
+                <span class="skw">click</span>(Pattern(<img src="1437541744228.png" />).exact().targetOffset(-<span class="dig">32</span>,<span class="dig">0</span>)); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Print_debug(<span class="str">'PortEnable is not used.'</span>)
+
+<span class="kw">def</span> Select_Video_Format():
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> SCTE104_Extraction():
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> AFD_AR_Extraction():
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> OP47_Extraction():
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> CC_Format():
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> Configure_Audio(audio_channel, audio_type):
+    ch_list = [<span class="dig">0</span>, <img src="AudioChannel1_2-2.png" />, <img src="AudioChannel3_4-1.png" />, <img src="AudioChannel5_6.png" />, <img src="AudioChannel7_8.png" />, <img src="AudioChannel9_10.png" />, <img src="AudioChannel11_12.png" />, <img src="AudioChannel13_14.png" />, <img src="AudioChannel15_16.png" />]
+
+    targetch = ch_list[int(audio_channel)]
+    <span class="skw">find</span>(Pattern(targetch).exact()); <span class="skw">click</span>(Pattern(targetch).exact().targetOffset(<span class="dig">155</span>,<span class="dig">0</span>))
+    <span class="kw">if</span> audio_type == <span class="str">'Disabled'</span>:
+        <span class="skw">click</span>(Pattern(targetch).exact().targetOffset(<span class="dig">100</span>,<span class="dig">20</span>))
+    <span class="kw">elif</span> audio_type == <span class="str">'PCM'</span>:
+        <span class="skw">click</span>(Pattern(targetch).exact().targetOffset(<span class="dig">100</span>,<span class="dig">35</span>))
+    <span class="kw">elif</span> audio_type == <span class="str">'DD'</span> <span class="kw">or</span> audio_type == <span class="str">'Dolby Digital'</span>:
+        <span class="skw">click</span>(Pattern(targetch).exact().targetOffset(<span class="dig">100</span>,<span class="dig">50</span>))
+    <span class="kw">elif</span> audio_type == <span class="str">'DD+'</span> <span class="kw">or</span> audio_type == <span class="str">'Dolby Digital Plus'</span>:
+        <span class="skw">click</span>(Pattern(targetch).exact().targetOffset(<span class="dig">100</span>,<span class="dig">75</span>))
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Invalid audio type not in range [Disabled, PCM, DD, DD+]: '</span> + audio_type + <span class="str">' for audio channel '</span> + audio_channel, <span class="dig">2</span>)
+
+<span class="kw">def</span> Configure_Audio_Channels():
+    <span class="cmt">#checking for 8 audio channels</span>
+    <span class="kw">if</span> Get_arg(<span class="str">'audio'</span>):
+        myaudio = Get_arg(<span class="str">'audio'</span>)
+        audiolist = myaudio.split(<span class="str">','</span>)
+        <span class="kw">for</span> item <span class="kw">in</span> audiolist:
+            audiochannel = item.split(<span class="str">'='</span>)
+            <span class="kw">if</span> len(audiochannel) == <span class="dig">2</span>:
+                Configure_Audio(audiochannel[<span class="dig">0</span>], audiochannel[<span class="dig">1</span>])
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Invalid audio parameter: '</span> + myaudio, <span class="dig">2</span>)
+
+<span class="kw">def</span> Verify_Port_Enable():
+    <span class="str">'''Verify if the sdi porit is enabled/disabled correctly
+    '''</span>
+    <span class="kw">if</span> Get_arg(<span class="str">'PortEnable'</span>):
+        <span class="cmt">#First select the right sdi port</span>
+        RunSikuli(<span class="str">'select_sdi_port'</span>)
+        my_portenable = int(Get_arg(<span class="str">'PortEnable'</span>))
+        <span class="kw">if</span> my_portenable == <span class="dig">0</span>:
+            <span class="cmt">#Check to see if port is actually off</span>
+            <span class="kw">if</span> exists(Pattern(<img src="1437541744228.png" />).exact()):
+                Print_debug(<span class="str">'Port turned off successfully.'</span>)
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Port failed to turn off.'</span>, <span class="dig">1</span>, <span class="dig">1</span>)
+        <span class="cmt">#Turning on the port.  If is is already turn on, do nothing.  Ortherwise, turn it on.</span>
+        <span class="kw">elif</span> my_portenable == <span class="dig">1</span>:
+            <span class="kw">if</span> exists(Pattern(<img src="1437541808778.png" />).exact()):
+                Print_debug(<span class="str">'Port turned on successfully.'</span>)
+            <span class="kw">else</span>:
+                Print_text(<span class="str">'Port failed to turn on.'</span>, <span class="dig">1</span>, <span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Print_debug(<span class="str">'PortEnable is not used.'</span>)
+
+<span class="kw">def</span> Setup_SDI_Port():
+    <span class="str">'''Configure all possible options for SDI input
+    '''</span>
+    Settings.OcrTextSearch=True
+    Settings.OcrTextRead=True
+
+    RunSikuli(<span class="str">'select_sdi_port'</span>)
+    <span class="kw">if</span> exists(<img src="SDIInput_label.png" />):
+        read_port = <span class="skw">find</span>(<img src="SDIInput_label.png" />).right(<span class="dig">40</span>).text()
+        expected_port = my_board + <span class="str">'/'</span> + my_port
+        <span class="kw">if</span> re.search(expected_port, read_port):
+            Print_text(<span class="str">'Setting up SDI port : '</span> + read_port)
+        <span class="kw">else</span>:
+            Exit_program(<span class="str">'Mis-matched port found: '</span> + read_port + <span class="str">' while looking for '</span> + expected_port, <span class="dig">2</span>, <span class="dig">1</span>)
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Cannot find SDI front-end page.'</span>, <span class="dig">1</span>, <span class="dig">1</span>)
+
+    Port_Enable()
+    Select_Video_Format()
+    CC_Format()
+    SCTE104_Extraction()
+    AFD_AR_Extraction()
+    OP47_Extraction()
+    Configure_Audio_Channels()
+    RunSikuli(<span class="str">'apply_changes'</span>)
+    Verify_Port_Enable()
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Setup_SDI_Port()
+</pre>
+</body>
+</html>

@@ -1,0 +1,115 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>mbr_video_resolution.sikuli</h2> <a href="mbr_video_resolution.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#This routine assume the main gui is alread launch and is currently in Process tab</span>
+<span class="cmt">#This script will select the first channel in mbr and change the resolution</span>
+<span class="cmt">#inputs: resolution=[720x480p59.94...352x480p59.94] applyChanges=0/1</span>
+<span class="cmt">#Usage: mbr_video_resolution.sikuli resolution=[] applyChanges=0</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'resolution'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Set_Output_Resolution():
+    myres = Get_arg(<span class="str">'resolution'</span>)
+    <span class="kw">if</span> myres:
+        <span class="skw">find</span>(<img src="mbr_Resolution_bar.png" />); <span class="skw">click</span>(Pattern(<img src="mbr_Resolution_bar.png" />).targetOffset(<span class="dig">0</span>,<span class="dig">18</span>)); <span class="skw">doubleClick</span>(Pattern(<img src="mbr_Resolution_bar.png" />).targetOffset(<span class="dig">1</span>,<span class="dig">16</span>))
+        <span class="kw">if</span> myres == <span class="str">'720x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="720x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="720x480p5994_selected.png" />).exact())
+        <span class="kw">elif</span> myres == <span class="str">'704x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="704x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="704x48Op5994_selected.png" />).exact())
+        <span class="kw">elif</span> myres == <span class="str">'640x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="640x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="640x480p5994_selected.png" />).exact())
+        <span class="kw">elif</span> myres == <span class="str">'544x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="544x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="544x480p5994_selected.png" />).exact())
+        <span class="kw">elif</span> myres == <span class="str">'528x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="528x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="528x480p5994_selected.png" />).exact())
+        <span class="kw">elif</span> myres == <span class="str">'480x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="480x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="480x480p5994_selected.png" />).exact())
+        <span class="kw">elif</span> myres == <span class="str">'352x480p59.94'</span>: <span class="skw">click</span>(Pattern(<img src="3S2x480p5994_select.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">wait</span>(Pattern(<img src="352x480p5994.png" />).exact())
+        <span class="kw">else</span>: Exit_program(<span class="str">'Invalid resolution given: '</span> + myres, <span class="dig">2</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Set_Output_Resolution()
+</pre>
+</body>
+</html>

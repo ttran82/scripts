@@ -1,0 +1,121 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>select_output_group.sikuli</h2> <a href="select_output_group.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Select the first output from ME7000 front-end</span>
+<span class="cmt">#This routine assume the main gui is alread launch and will click on Processing tab and select Output Group number </span>
+<span class="cmt">#inputs: optional: outputGroup=[1..] Output Group Number.  Default will be 1, the first output group</span>
+<span class="cmt">#Usage: select_output_group.sikuli</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for optional arguments</span>
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'outputGroup'</span>):
+        Set_arg(<span class="str">'outputGroup'</span>, <span class="str">'1'</span>)
+        Print_debug(<span class="str">'outputGroup is not defined.  Will use 1 as default.'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+Settings.OcrTextSearch=True
+Settings.OcrTextRead=True
+
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Select_Outputs():
+
+    <span class="cmt">#first need to select Output group tabs</span>
+    Set_arg(<span class="str">'tabName'</span>, <span class="str">'Processing'</span>)
+    runScript(sikuliScriptDir + <span class="str">'nav_tabs'</span>)
+
+    <span class="skw">wait</span>(<img src="1437553963025.png" />)
+
+    myoutput = (Get_arg(<span class="str">'outputGroup'</span>))
+    <span class="kw">if</span> int(myoutput) == <span class="dig">1</span>:
+        myoffset = <span class="dig">18</span>
+        <span class="skw">click</span>(Pattern(<img src="1437553963025-1.png" />).targetOffset(-<span class="dig">50</span>,int(myoutput)*myoffset))
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Invalid port number: '</span> +  myoutput)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Select_Outputs()
+</pre>
+</body>
+</html>

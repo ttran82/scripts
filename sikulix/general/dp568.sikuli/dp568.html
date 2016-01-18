@@ -1,0 +1,371 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>dp568.sikuli</h2> <a href="dp568.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run DP568 Dolby Reference Decoder </span>
+<span class="cmt">#inputs: browser=[IE, FireFox, Chrome] dp568Ip=&lt;ip address&gt;</span>
+<span class="cmt">#input: dp568Input = [IP, SDI, ASI, AES, NONE]</span>
+<span class="cmt">#input: dp568IPBookmarkSetup = 0/1, udpIp=[], udpPort=[], udpMode=[Multicast, Unicast]</span>
+<span class="cmt">#Usage: DP568.sikuli browser=Chrome dp568ip=10.77.165.15</span>
+<span class="cmt">#Usage to set SDI input: sikuliScriptName=DP568.sikuli dp568Input=SDI</span>
+<span class="cmt">#Usage to set IP input: sikuliScriptName=DP568.sikuli dp568Input=IP</span>
+<span class="cmt">#Usage to add multicast address: DP568.sikuli dp568IPBookmarkSetup=1 udpIp=236.9.108.1 udpPort=8433</span>
+<span class="cmt">#Usage to add unicast address: DP568.sikuli dp568IPBookmarkSetup=1 udpPort=8433 udpMode=unicast</span>
+<span class="cmt">#Usage to check video format: DP568.sikuli  dp568Input=SDI checkVideo=1 outputFile=[]</span>
+<span class="cmt">#Usage to check video format: DP568.sikuli  dp568Input=SDI checkAudio=1 outputFile=[]</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> commonlib <span class="kw">import</span> *
+<span class="kw">import</span> re
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments </span>
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'browser'</span>):
+        Set_arg(<span class="str">'browser'</span>, <span class="str">'chrome'</span>)
+        Print_debug(<span class="str">'browser is not given.  Use default value: Chrome'</span>)
+    Check_arg(<span class="str">'dp568Ip'</span>)
+    <span class="cmt">#Set name for IP bookmark</span>
+    <span class="kw">if</span> Get_arg(<span class="str">'dp568IPBookmarkSetup'</span>):
+        my_bookmarksetup = Get_arg(<span class="str">'dp568IPBookmarkSetup'</span>)
+        <span class="kw">if</span> my_bookmarksetup == <span class="str">'1'</span>:
+            Set_arg(<span class="str">'dp568Input'</span>, <span class="str">'IP'</span>)
+            <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'udpMode'</span>):
+                Set_arg(<span class="str">'udpMode'</span>, <span class="str">'multicast'</span>)
+                Print_debug(<span class="str">'udpMode is not given.  Will use default: multicast.'</span>)
+            Check_arg(<span class="str">'udpPort'</span>)
+            Set_arg(<span class="str">'dp568IPBookmarkName'</span>, <span class="str">'SikuliX'</span>)
+            Print_debug(<span class="str">'Will always use SikuliX as IP bookmark for detecting IP inputs.'</span>)
+        <span class="kw">else</span>:
+            Print_debug(<span class="str">'dp568IPBookmarkSetup is disabled.'</span>)
+    <span class="kw">if</span> Get_arg(<span class="str">'checkVideo'</span>):
+        checkvideo = Get_arg(<span class="str">'checkVideo'</span>)
+        <span class="kw">if</span> checkvideo == <span class="str">'1'</span>:
+            Print_debug(<span class="str">'Check video is enabled.'</span>)
+        <span class="kw">else</span>:
+            Print_debug(<span class="str">'Check video is disabled.'</span>)
+
+    <span class="kw">if</span> Get_arg(<span class="str">'checkAudio'</span>):
+        checkaudio = Get_arg(<span class="str">'checkAudio'</span>)
+        <span class="kw">if</span> checkaudio == <span class="str">'1'</span>:
+            Print_debug(<span class="str">'Check audio is enabled.'</span>)
+        <span class="kw">else</span>:
+            Print_debug(<span class="str">'Check audio is disabled.'</span>)
+
+    <span class="kw">if</span> Get_arg(<span class="str">'outputFile'</span>):
+        myoutputfile = Get_arg(<span class="str">'outputFile'</span>)
+        <span class="kw">if</span> <span class="kw">not</span> re.search(<span class="str">r'\\'</span>, myoutputfile):
+            myoutputfile = os.getcwd() + <span class="str">'\\'</span> + myoutputfile
+            Set_arg(<span class="str">'outputFile'</span>, myoutputfile)
+
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+Settings.OcrTextSearch=True
+Settings.OcrTextRead=True
+
+dp568Title = <span class="str">'Dolby Reference Decoder'</span>
+outputfile = Get_arg(<span class="str">'outputFile'</span>)
+
+<span class="cmt">#Let have a hash table of what to look for</span>
+videoDict = {<span class="str">'xoffsetdragend'</span>: <span class="dig">220</span>,
+             <span class="str">'videoformat'</span>:<img src="videoFormat_label-1.png" />
+            }
+<span class="cmt">#This is the value to click from group audio channel to bring out bitstream info</span>
+OffsetY_ForAudio = <span class="dig">26</span>
+<span class="cmt">#This is the information you see when clicking on the main audio codec.</span>
+<span class="cmt">#this will have AC3 Descriptor and etc</span>
+audioCodecDict = {<span class="str">'xoffsetdragend'</span>: <span class="dig">220</span>,
+            <span class="str">'language'</span>:<img src="Language_label.png" />,
+            <span class="str">'audiotype'</span>:<img src="AudioType_label.png" />,
+            <span class="str">'streamtype'</span>:<img src="StreamType_label.png" />,
+            <span class="str">'continuityerrors'</span>:<img src="ContinuityErrors_label.png" />
+            }
+<span class="cmt">#This is information you see when clicking the specific bitrate of the audio</span>
+<span class="cmt">#This give you more about the bistream, downmixing, and copyright, etc</span>
+audioBitstreamDict = {<span class="str">'xoffsetdragend'</span>: <span class="dig">130</span>,
+                 <span class="str">'group1ch1/2'</span>:<img src="Group1Ch12_label-1.png" />,
+                 <span class="str">'group1ch3/4'</span>:<img src="Group1Ch34_label-1.png" />,
+                 <span class="str">'group2ch5/6'</span>:<img src="Group2Ch56_label-1.png" />,
+                 <span class="str">'group2ch7/8'</span>:<img src="Group2Ch78_label-1.png" />,
+                 <span class="str">'group3ch9/10'</span>:<img src="Group3Ch910_label-1.png" />,
+                 <span class="str">'group3ch11/12'</span>:<img src="Group4Ch1314_label-2.png" />,
+                 <span class="str">'group4ch13/14'</span>:<img src="Group4Ch1314_label-3.png" />,
+                 <span class="str">'group4ch15/16'</span>:<img src="Group4Ch1516_label-1.png" />,
+                 <span class="str">'codec'</span>:<img src="Codec_label-1.png" />,
+                 <span class="str">'bitstreamid'</span>:<img src="BitstreamID_label-1.png" />,
+                 <span class="str">'dialnorm'</span>:<img src="Dialnorm_label-1.png" />,
+                 <span class="str">'channelmode'</span>:<img src="ChannelMode_label-1.png" />,
+                }
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Read_TextFromLabel(labeltext, mydict):
+    <span class="str">'''Read text to the right with optional offset'''</span>
+    <span class="kw">if</span> mydict.has_key(labeltext.lower()):
+        labelimg = mydict.get(labeltext.lower())
+        myLabel = Region(<span class="skw">find</span>(Pattern(labelimg).exact()))
+        <span class="kw">if</span> <span class="kw">not</span> myLabel:
+            Exit_program(<span class="str">'Cannot find label text matching '</span> + labelimg, <span class="dig">2</span>)
+        <span class="kw">else</span>:
+            myXoffsetDragStart = int(myLabel.getW()) / <span class="dig">2</span>
+            myXoffsetDragEnd = mydict.get(<span class="str">'xoffsetdragend'</span>)
+            <span class="skw">dragDrop</span>(Pattern(labelimg).exact().targetOffset(myXoffsetDragStart, <span class="dig">0</span>), Pattern(labelimg).exact().targetOffset(myXoffsetDragStart+myXoffsetDragEnd, <span class="dig">0</span>))
+            Control_C()
+            myvalue = Env.getClipboard()
+            myvalue = myvalue.strip()
+            <span class="kw">return</span> myvalue
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Unregconized parameter: '</span> + labeltext, <span class="dig">2</span>)
+
+<span class="kw">def</span> Zoom_Chrome():
+    <span class="cmt">#First reset the zoom to default</span>
+    <span class="skw">type</span>(<span class="str">'+'</span>, KeyModifier.CTRL)
+    <span class="skw">find</span>(<img src="Resettodefault.png" />); <span class="skw">click</span>(<img src="Resettodefault.png" />)
+
+<span class="kw">def</span> Zoom_Firefox():
+    <span class="cmt">#First reset the zoom to default</span>
+    <span class="skw">find</span>(Pattern(<img src="firefox_setting.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">click</span>(Pattern(<img src="firefox_setting.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">find</span>(<img src="firefox_setting_open.png" />); <span class="skw">doubleClick</span>(Pattern(<img src="firefox_setting_open.png" />).targetOffset(<span class="dig">2</span>,<span class="dig">37</span>))
+    <span class="skw">find</span>(Pattern(<img src="firefox_setting.png" />).similar(<span class="dig">0.80</span>)); <span class="skw">click</span>(Pattern(<img src="firefox_setting.png" />).similar(<span class="dig">0.80</span>))
+
+<span class="kw">def</span> Launch_DP568():
+    new_chrome_title = <span class="str">'New Tab'</span>
+    new_firefox_title = <span class="str">'Mozilla Firefox Start Page'</span>
+    mybrowser = Get_arg(<span class="str">'browser'</span>)
+    mydp568ip = Get_arg(<span class="str">'dp568Ip'</span>)
+
+    Set_arg(<span class="str">'browser'</span>, mybrowser)
+    RunSikuli(<span class="str">'browser_launcher'</span>)
+
+    <span class="kw">if</span> mybrowser.lower() == <span class="str">'chrome'</span>:
+        <span class="skw">wait</span>(<img src="chrome_search_bar.png" />); <span class="skw">click</span>(<img src="chrome_search_bar.png" />); <span class="skw">type</span>(<span class="str">'http://'</span> + mydp568ip); <span class="skw">type</span>(Key.ENTER)
+    <span class="kw">elif</span> mybrowser.lower() == <span class="str">'firefox'</span>:
+        <span class="skw">wait</span>(<img src="firefox_search.png" />); <span class="skw">click</span>(<img src="firefox_search.png" />); <span class="skw">type</span>(<span class="str">'http://'</span> + mydp568ip); <span class="skw">type</span>(Key.ENTER)
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Unsupported browser enter: '</span> + mybrowser, <span class="dig">2</span>)
+
+    <span class="skw">wait</span>(<img src="DolbyReferenceDecoder_title.png" />)
+
+    <span class="kw">if</span> <span class="kw">not</span> exists(<img src="DP568Reference_title.png" />):
+        <span class="kw">if</span> mybrowser.lower() == <span class="str">'chrome'</span>: Zoom_Chrome()
+        <span class="kw">if</span> mybrowser.lower() == <span class="str">'firefox'</span>: Zoom_Firefox()
+        Print_debug(<span class="str">'Adjusting browser zoom'</span>)
+
+    <span class="kw">if</span> exists(<img src="DP568Reference_title.png" />):
+        Print_debug(<span class="str">'dp568 sesssion launched successfully.'</span>)
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Failed to connect to dp568: '</span> + mydp568ip, <span class="dig">2</span>)
+
+<span class="kw">def</span> Run_DP568():
+    mycmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + dp568Title + <span class="str">'\" windows_action=2'</span>
+    my_status = Run_cmd(mycmd)
+
+    <span class="kw">if</span> int(my_status) == <span class="dig">0</span>:
+        Print_debug(dp568Title + <span class="str">' is already running.  Use current session.'</span>)
+    <span class="kw">else</span>:
+        Print_debug(<span class="str">'Need to launch a new browser session to control DP568.'</span>)
+        Launch_DP568()
+
+
+<span class="kw">def</span> Select_Input():
+    <span class="kw">if</span> Get_arg(<span class="str">'dp568Input'</span>):
+        <span class="skw">find</span>(<img src="dp568_menu.png" />); <span class="skw">click</span>(Pattern(<img src="dp568_menu.png" />).targetOffset(-<span class="dig">25</span>,-<span class="dig">167</span>)); <span class="skw">wait</span>(<img src="Input_label.png" />)
+        my_input = Get_arg(<span class="str">'dp568Input'</span>)
+        <span class="kw">if</span> my_input.upper() == <span class="str">'ASI'</span> <span class="kw">or</span> my_input == <span class="str">'SDI'</span>:
+            <span class="kw">if</span> <span class="kw">not</span> exists(<img src="InputASISDI_label.png" />): <span class="skw">click</span>(Pattern(<img src="Input_label.png" />).targetOffset(<span class="dig">110</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="ASISDI_select.png" />).similar(<span class="dig">0.90</span>)); <span class="skw">wait</span>(<img src="InputASISDI_label.png" />)
+        <span class="kw">elif</span> my_input.upper() == <span class="str">'IP'</span>:
+            <span class="kw">if</span> <span class="kw">not</span> exists(<img src="InputIP_label.png" />): <span class="skw">click</span>(Pattern(<img src="Input_label.png" />).targetOffset(<span class="dig">110</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="IP_select.png" />).similar(<span class="dig">0.90</span>)); <span class="skw">wait</span>(<img src="InputIP_label.png" />)
+        <span class="kw">elif</span> my_input.upper() == <span class="str">'AES'</span>:
+            <span class="kw">if</span> <span class="kw">not</span> exists(<img src="InputAES_label.png" />): <span class="skw">click</span>(Pattern(<img src="Input_label.png" />).targetOffset(<span class="dig">110</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="AES_select.png" />).similar(<span class="dig">0.90</span>)); <span class="skw">wait</span>(<img src="InputAES_label.png" />)
+        <span class="kw">elif</span> my_input.upper() == <span class="str">'NONE'</span>:
+            <span class="kw">if</span> <span class="kw">not</span> exists(<img src="InputNone_label.png" />): <span class="skw">click</span>(Pattern(<img src="Input_label.png" />).targetOffset(<span class="dig">110</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="None_select.png" />).similar(<span class="dig">0.90</span>)); <span class="skw">wait</span>(<img src="InputNone_label.png" />)
+        <span class="kw">else</span>:
+            Exit_program(<span class="str">'Invalid dp568Input given not in range [ASI, SDI, IP, AES, NONE]: '</span> + my_input, <span class="dig">2</span>)
+
+<span class="kw">def</span> Setup_IP_Bookmarks():
+    <span class="kw">if</span> Get_arg(<span class="str">'dp568IPBookmarkSetup'</span>):
+        my_bookmark = Get_arg(<span class="str">'dp568IPBookmarkName'</span>)
+        <span class="cmt">#Before deleting label, has to select input to none first</span>
+        <span class="skw">find</span>(<img src="dp568_menu.png" />); <span class="skw">click</span>(Pattern(<img src="dp568_menu.png" />).targetOffset(-<span class="dig">26</span>,-<span class="dig">167</span>)); <span class="skw">click</span>(Pattern(<img src="InputIP_label.png" />).targetOffset(<span class="dig">341</span>,<span class="dig">0</span>)); <span class="skw">click</span>(Pattern(<img src="None_select.png" />).similar(<span class="dig">0.90</span>))
+        <span class="cmt">#delete existing label if it is already there</span>
+        <span class="skw">find</span>(<img src="dp568_menu.png" />); <span class="skw">click</span>(Pattern(<img src="dp568_menu.png" />).targetOffset(-<span class="dig">1</span>,-<span class="dig">18</span>)); <span class="skw">wait</span>(<img src="AddBookmarkName_setting.png" />)
+        <span class="kw">if</span> exists(<img src="SikuliX_label.png" />): <span class="skw">click</span>(<img src="SikuliX_label.png" />); <span class="skw">find</span>(Pattern(<img src="delete_button.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="delete_button.png" />).exact())
+        <span class="cmt">#creating ip book mark base on given information</span>
+
+        outputport = Get_arg(<span class="str">'udpPort'</span>)
+        outputmode = Get_arg(<span class="str">'udpMode'</span>)
+        <span class="cmt">#Entering bookmark name</span>
+        <span class="skw">doubleClick</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(-<span class="dig">267</span>,<span class="dig">17</span>)); <span class="skw">type</span>(my_bookmark)
+        <span class="kw">if</span> outputmode.lower() == <span class="str">'multicast'</span>:
+            Check_arg(<span class="str">'udpIp'</span>)
+            outputip = Get_arg(<span class="str">'udpIp'</span>)
+            <span class="cmt">#Selecting mode type</span>
+            <span class="skw">click</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(-<span class="dig">92</span>,<span class="dig">16</span>))
+            <span class="skw">click</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(-<span class="dig">123</span>,<span class="dig">42</span>))
+            <span class="cmt">#Entering multicast group</span>
+            <span class="skw">doubleClick</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(<span class="dig">5</span>,<span class="dig">17</span>)); <span class="skw">type</span>(outputip)
+            <span class="cmt">#Entering multicast port</span>
+            <span class="skw">doubleClick</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(<span class="dig">131</span>,<span class="dig">18</span>)); <span class="skw">type</span>(outputport)
+
+        <span class="kw">elif</span> outputmode.lower() == <span class="str">'unicast'</span>:
+            <span class="cmt">#Selecting mode type</span>
+            <span class="skw">click</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(-<span class="dig">92</span>,<span class="dig">16</span>))
+            <span class="skw">click</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(-<span class="dig">126</span>,<span class="dig">53</span>))
+             <span class="cmt">#Entering multicast port</span>
+            <span class="skw">doubleClick</span>(<span class="skw">click</span>(Pattern(<img src="AddBookmarkName_setting.png" />).targetOffset(<span class="dig">131</span>,<span class="dig">18</span>))); <span class="skw">type</span>(outputport)
+        <span class="kw">else</span>:
+            Exit_program(<span class="str">'Invalid udpMode entered not in range [multicast/unicast]: '</span> + outputmode, <span class="dig">2</span>)
+
+        <span class="cmt">#Hitting save</span>
+        <span class="skw">find</span>(Pattern(<img src="save_button.png" />).exact()); <span class="skw">click</span>(Pattern(<img src="save_button.png" />).exact())
+        <span class="kw">if</span> exists(<img src="SikuliX_label.png" />): Print_debug(<span class="str">'SikuliX ip bookmark created successfully.'</span>)
+        <span class="kw">else</span>: Exit_program(<span class="str">'SikuliX ip bookmark failed to create.'</span>, <span class="dig">1</span>)
+
+<span class="kw">def</span> Read_SDI_Video_Format():
+    <span class="kw">if</span> exists(<img src="video_status.png" />):
+        Print_debug(<span class="str">'Video status is good.'</span>)
+        read_video_format = Read_TextFromLabel(<span class="str">'videoFormat'</span>, videoDict)
+        <span class="cmt">#strip off any trailing fps</span>
+        read_video_format = read_video_format.replace(<span class="str">'fps'</span>, <span class="str">''</span>)
+        read_video_format = read_video_format.replace(<span class="str">' '</span>, <span class="str">''</span>)
+        read_video_format = read_video_format.strip()
+        mystr = <span class="str">'videoformat='</span> + read_video_format
+        Print_text(mystr)
+        Print_to_file(outputfile, mystr)
+        <span class="skw">click</span>(Pattern(<img src="InputASISDI_label.png" />).targetOffset(-<span class="dig">26</span>,<span class="dig">46</span>))
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Video signal is not good.'</span>, <span class="dig">1</span>, <span class="dig">1</span>)
+
+<span class="kw">def</span> Read_SDI_Audio_Format():
+    <span class="kw">if</span> Get_arg(<span class="str">'checkAudio'</span>):
+        <span class="skw">dragDrop</span>(Pattern(<img src="SDI_detection.png" />).similar(<span class="dig">0.90</span>).targetOffset(-<span class="dig">26</span>,<span class="dig">23</span>),Pattern(<img src="SDI_detection.png" />).similar(<span class="dig">0.90</span>).targetOffset(<span class="dig">240</span>,<span class="dig">453</span>))
+        Control_C()
+        read_audio_format = Env.getClipboard()
+        mylist = read_audio_format.split(<span class="str">'\n'</span>)
+        <span class="kw">print</span> len(mylist)
+        <span class="kw">for</span> key <span class="kw">in</span> mylist:
+            eachkey = key.split(<span class="str">'-'</span>)
+            <span class="kw">if</span> len(eachkey) == <span class="dig">2</span>:
+                audioch = eachkey[<span class="dig">0</span>]
+                audioch = audioch.replace(<span class="str">' '</span>, <span class="str">''</span>)
+                audiovalue = eachkey[<span class="dig">1</span>]
+                audioch = audioch.strip()
+                audiovalue = audiovalue.strip()
+                mystr = audioch.lower() + <span class="str">'='</span> + audiovalue
+                Print_text(mystr)
+                Print_to_file(outputfile, mystr)
+        <span class="skw">click</span>(Pattern(<img src="InputASISDI_label.png" />).targetOffset(-<span class="dig">26</span>,<span class="dig">46</span>))
+
+<span class="kw">def</span> Check_Video_Format():
+    <span class="kw">if</span> Get_arg(<span class="str">'checkVideo'</span>):
+        checkvideo = Get_arg(<span class="str">'checkVideo'</span>)
+        <span class="kw">if</span> checkvideo == <span class="str">'1'</span>:
+            <span class="cmt">#Depends on if we're in SDI/IP selection</span>
+            <span class="skw">click</span>(Pattern(<img src="dp568_menu.png" />).targetOffset(-<span class="dig">27</span>,-<span class="dig">167</span>));
+            <span class="cmt">#detecting what is the input</span>
+            <span class="kw">if</span> exists(<img src="InputIP_label.png" />):
+                <span class="kw">if</span> <span class="kw">not</span> exists(Pattern(<img src="SourceIPISikuli_label.png" />).similar(<span class="dig">0.80</span>)):
+                    <span class="cmt">#Need to select SikuliX</span>
+                    <span class="skw">click</span>(Pattern(<img src="InputIP_label.png" />).targetOffset(<span class="dig">339</span>,-<span class="dig">1</span>)); <span class="skw">click</span>(<img src="Sikulix_select.png" />)
+
+
+            <span class="kw">if</span> exists(<img src="InputASISDI_label.png" />):
+                <span class="skw">click</span>(Pattern(<img src="InputASISDI_label.png" />).targetOffset(-<span class="dig">26</span>,<span class="dig">46</span>))
+                <span class="kw">if</span> exists(Pattern(<img src="asi_detection.png" />).similar(<span class="dig">0.90</span>)):
+                    mystr = <span class="str">'inputtype=ASI'</span>
+                    Print_text(mystr)
+                    Print_to_file(outputfile, mystr)
+                <span class="kw">elif</span> exists(Pattern(<img src="SDI_detection.png" />).similar(<span class="dig">0.90</span>)):
+                    mystr = <span class="str">'inputtype=SDI'</span>
+                    Print_text(mystr)
+                    Print_to_file(outputfile, mystr)
+                    Read_SDI_Video_Format()
+                    Read_SDI_Audio_Format()
+                <span class="kw">else</span>:
+                    mystr = <span class="str">'inputtype=unknown'</span>
+                    Print_text(mystr)
+                    Print_to_file(outputfile, mystr)
+
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Run_DP568()
+Select_Input()
+Setup_IP_Bookmarks()
+Check_Video_Format()
+</pre>
+</body>
+</html>

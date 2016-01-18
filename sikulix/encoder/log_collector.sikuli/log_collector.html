@@ -1,0 +1,224 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>log_collector.sikuli</h2> <a href="log_collector.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run Log Collector from ME7000 GUI</span>
+<span class="cmt">#    First check if the GUI is running.  If not, run the GUI first login using encGuiLogin, encGuiPassword</span>
+<span class="cmt">#    Then, run the log collector to get outputLogFile logCaptureTime</span>
+<span class="cmt">#inputs: encIP=&lt;&gt; encGuiLogin=[] encGuiPassword=[] encLogFile=[] logOutputDir=[] logCaptureTime=[] logWaitTime=[]</span>
+<span class="cmt">#Usage: log_collector.sikuli </span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#os.environ.get('kleverCurrentDir')</span>
+    Check_arg(<span class="str">'encIp'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'encGuiLogin'</span>):
+        Set_arg(<span class="str">'encGuiLogin'</span>, <span class="str">'Admin'</span>)
+        Print_debug(<span class="str">'Encoder Gui Login is not given.  Will use default Login: Admin'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'encGuiPassword'</span>):
+        Set_arg(<span class="str">'encGuiPassword'</span>, <span class="str">''</span>)
+        Print_debug(<span class="str">'Encoder Gui Password is not given.  Will use default password: &lt;blank&gt;'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'encLogFile'</span>):
+        encLogFile = <span class="str">"Logs_"</span> + Get_arg(<span class="str">'encIP'</span>) + <span class="str">".zip"</span>
+        Print_debug(<span class="str">'Encoder Log File is not given.  Will use default version: '</span> + encLogFile)
+        <span class="cmt">#if klever environment is active, let use </span>
+        <span class="kw">if</span> Get_arg(<span class="str">'logOutputDir'</span>):
+            encLogFile = Get_arg(<span class="str">'logOutputDir'</span>) + <span class="str">'\\'</span> + encLogFile
+        <span class="kw">elif</span> Get_arg(<span class="str">'kleverCurrentDir'</span>):
+            encLogFile = Get_arg(<span class="str">'kleverCurrentDir'</span>) + <span class="str">'\\'</span> + encLogFile
+        <span class="kw">else</span>:
+            encLogFile = os.getcwd() + <span class="str">'\\'</span> + encLogFile
+        Set_arg(<span class="str">'encLogFile'</span>, encLogFile)
+        Print_debug(<span class="str">'encLogFile = '</span> + encLogFile)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'logCaptureTime'</span>):
+        Set_arg(<span class="str">'logCaptureTime'</span>, <span class="str">'0'</span>)
+        Print_debug(<span class="str">'Capture Time is not given.  Will use default 0'</span>)
+
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'logWaitTime'</span>):
+        Set_arg(<span class="str">'logWaitTime'</span>, <span class="str">'300'</span>)
+        Print_debug(<span class="str">'Log wait time is not given.  Will use default 300 seconds'</span>)
+
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+javaME7000MainTitle = <span class="str">'ME-7000 - '</span> + str(Get_arg(<span class="str">'encIp'</span>)) + <span class="str">' - '</span> + str(Get_arg(<span class="str">'encGuiLogin'</span>))
+javaME7000LogTitle = <span class="str">'Log Collector'</span>
+
+<span class="cmt">#Any definitions are here</span>
+
+<span class="kw">def</span> Launch_collector():
+    Set_arg(<span class="str">'menuName'</span>, <span class="str">'Help'</span>)
+    Set_arg(<span class="str">'menuSubName'</span>, <span class="str">'Logs'</span>)
+    returnCode = runScript(sikuliScriptDir + <span class="str">'nav_menu'</span>)
+    <span class="kw">if</span> int(returnCode) == <span class="dig">0</span>:
+        Print_debug(<span class="str">'Navigate menu Help-&gt;Logs successfully.'</span>)
+    <span class="kw">else</span>:
+        Print_text(<span class="str">'Navigate menu Help-&gt;Logs failed.'</span>)
+        exit(<span class="dig">1</span>)
+    my_cmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000LogTitle + <span class="str">'\" windows_action=2'</span>
+    find_JavaLogTitle = Run_cmd(my_cmd)
+    <span class="kw">if</span> int(find_JavaLogTitle) == <span class="dig">0</span>:
+        Print_debug(javaME7000LogTitle + <span class="str">' launched successfully.'</span>)
+    <span class="kw">else</span>:
+        Print_text(javaME7000LogTitle + <span class="str">'Failed to launch.'</span>)
+
+<span class="cmt">#determine if log collector is already running</span>
+<span class="kw">def</span> Check_collector():
+    <span class="cmt">#run('auto_show_desktop.exe')</span>
+    my_cmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000LogTitle + <span class="str">'\" windows_action=2'</span>
+    find_JavaLogTitle = Run_cmd(my_cmd)
+    <span class="kw">if</span> int(find_JavaLogTitle) == <span class="dig">0</span>:
+        Print_debug(javaME7000LogTitle + <span class="str">' is already running.  Use current session.'</span>)
+    <span class="kw">else</span>:
+        Print_text(javaME7000LogTitle + <span class="str">' is not currently running.  Need to launch Main JavaGUI first'</span>)
+        returnCode = runScript(sikuliScriptDir + <span class="str">'launch_java_client'</span>)
+        <span class="kw">if</span> int(returnCode) == <span class="dig">0</span>:
+            Print_debug(<span class="str">'Main java client launch successfully.'</span>)
+            Launch_collector()
+        <span class="kw">else</span>:
+            Print_text(<span class="str">'Main Java client failed to launch.'</span>)
+            Exit_capture(<span class="dig">1</span>)
+
+<span class="kw">def</span> Run_collector():
+    my_cmd = <span class="str">'auto_windows_manager.exe windows_title=\"'</span> + javaME7000LogTitle + <span class="str">'\" windows_action=2'</span>
+    Run_cmd(my_cmd)
+    <span class="cmt">#Entering ip address</span>
+    my_ip = Get_arg(<span class="str">'encIp'</span>)
+    <span class="skw">find</span>(<img src="1437377880680.png" />)
+    <span class="skw">doubleClick</span>(Pattern(<img src="1437377880680.png" />).targetOffset(<span class="dig">48</span>,<span class="dig">3</span>))
+    <span class="skw">type</span>(my_ip); <span class="skw">sleep</span>(<span class="dig">1</span>); <span class="skw">type</span>(Key.TAB)
+
+    <span class="cmt">#Entering output file name</span>
+    my_logfile = Get_arg(<span class="str">'encLogFile'</span>)
+    <span class="skw">find</span>(<img src="1437378144307.png" />)
+    <span class="skw">click</span>(<img src="1437378144307.png" />)
+    <span class="skw">wait</span>(<img src="1437378217508.png" />)
+    <span class="skw">type</span>(my_logfile); <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="skw">find</span>(<img src="1437378354998.png" />)
+    <span class="skw">click</span>(Pattern(<img src="1437378354998.png" />).targetOffset(-<span class="dig">35</span>,<span class="dig">1</span>))
+    <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="kw">if</span> exists(<img src="1437381287975.png" />):
+        <span class="skw">find</span>(<img src="1437381309486.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437381309486.png" />).targetOffset(-<span class="dig">75</span>,<span class="dig">0</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+    <span class="cmt">#Enter capture time</span>
+    my_capturetime = Get_arg(<span class="str">'logCaptureTime'</span>)
+    <span class="skw">find</span>(<img src="1437378630760.png" />)
+    <span class="skw">doubleClick</span>(Pattern(<img src="1437378630760.png" />).targetOffset(<span class="dig">56</span>,<span class="dig">1</span>))
+    <span class="skw">type</span>(my_capturetime); <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="cmt">#Press start button</span>
+    <span class="skw">find</span>(<img src="1437379375053.png" />)
+    <span class="skw">click</span>(<img src="1437379375053.png" />)
+    <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(<img src="1437381287975.png" />):
+        <span class="skw">find</span>(<img src="1437381309486.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437381309486.png" />).targetOffset(-<span class="dig">75</span>,<span class="dig">0</span>))
+        <span class="skw">sleep</span>(<span class="dig">1</span>)
+
+    <span class="kw">if</span> exists(<img src="1437382320909.png" />):
+        Print_debug(<span class="str">'Found security warning pop-up windows'</span>)
+        <span class="skw">find</span>(<img src="1437382339991.png" />)
+        <span class="skw">click</span>(Pattern(<img src="1437382339991.png" />).targetOffset(-<span class="dig">43</span>,<span class="dig">0</span>))
+        <span class="skw">sleep</span>(<span class="dig">2</span>)
+    <span class="cmt">#waiting for log collector to finish</span>
+    my_waittime = int(Get_arg(<span class="str">'logWaitTime'</span>))
+    <span class="skw">wait</span>(<img src="1437382145103.png" />, my_waittime)
+
+    <span class="cmt">#now check if file is existed</span>
+    <span class="kw">if</span> os.path.exists(my_logfile):
+        Print_debug(my_logfile + <span class="str">' saved successfully.'</span>)
+        exit(<span class="dig">0</span>)
+    <span class="kw">else</span>:
+        Print_text(my_logfile + <span class="str">' not found.'</span>)
+        Exit_capture(<span class="dig">1</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Check_collector()
+Run_collector()
+</pre>
+</body>
+</html>

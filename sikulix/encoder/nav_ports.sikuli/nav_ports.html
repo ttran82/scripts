@@ -1,0 +1,184 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>nav_ports.sikuli</h2> <a href="nav_ports.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#Run Navigate ports from tabs: Mux, Groups, Processing;</span>
+<span class="cmt">#Will support all boards it is XCD (Main) or ENC (SDI) </span>
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#Input: boardNum = [1..4]</span>
+<span class="cmt">#Input: portNum = [1..10]</span>
+<span class="cmt">#Input: ethPortType = [in, out]</span>
+<span class="cmt">#Input: portClick = [1..2] 1 = single click, 2 = double click</span>
+<span class="cmt">#Usage: manage_input_mux.sikuli muxAction=delete muxName=InputMux1</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    Check_arg(<span class="str">'tabName'</span>)
+    Check_arg(<span class="str">'boardNum'</span>)
+    Check_arg(<span class="str">'portNum'</span>)
+    <span class="kw">if</span> <span class="kw">not</span> Get_arg(<span class="str">'portClick'</span>):
+        Set_arg(<span class="str">'portClick'</span>, <span class="str">'1'</span>)
+        Print_debug(<span class="str">'portClick is not defined.  Will use 1 as default.'</span>)
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here</span>
+my_tab = Get_arg(<span class="str">'tabName'</span>)
+my_board = Get_arg(<span class="str">'boardNum'</span>)
+my_port = Get_arg(<span class="str">'portNum'</span>)
+
+clicktype = Get_arg(<span class="str">'portClick'</span>)
+eth_port = my_board.lower() + <span class="str">'/'</span> + my_port.lower()
+
+ethPortDict = {
+    <span class="str">'4/1'</span>:<img src="eth_4.1_select.png" />, <span class="str">'4/2'</span>:<img src="eth_4.2_select.png" />, <span class="str">'4/3'</span>:<img src="eth_4.3_select-1.png" />, <span class="str">'4/4'</span>:<img src="eth_4.4_select.png" />, <span class="str">'4/5'</span>:<img src="eth_4.5_select.png" />, <span class="str">'4/6'</span>:<img src="eth_4.6_select.png" />, <span class="str">'4/7'</span>:<img src="eth_4.7_select.png" />, <span class="str">'4/8'</span>:<img src="eth_4.8_select.png" />, <span class="str">'4/9'</span>:<img src="eth_4.9_select.png" />, <span class="str">'4/10'</span>:Pattern(<img src="eth_4.10_select.png" />).targetOffset(<span class="dig">0</span>,-<span class="dig">8</span>)
+    }
+
+boardDict = {
+    <span class="str">'1'</span>: <img src="board1_select.png" />, <span class="str">'2'</span>:<img src="1437467683872-1.png" />, <span class="str">'3'</span>:<img src="1437467850488-1.png" />, <span class="str">'4'</span>:<img src="Board4_select.png" />
+    }
+
+boardSelectedDict = {
+    <span class="str">'1'</span>: <img src="board1_selected.png" />, <span class="str">'2'</span>:<img src="board2_selected.png" />, <span class="str">'3'</span>:<img src="board3_selected.png" />, <span class="str">'4'</span>:<img src="Board4_selected.png" />
+    }
+
+<span class="cmt">#Any definitions are here</span>
+<span class="kw">def</span> Nav_Boards():
+    Set_arg(<span class="str">'tabName'</span>, my_tab)
+    RunSikuli(<span class="str">'nav_tabs'</span>)
+    <span class="kw">if</span> exists(Pattern(<img src="me_indicator_1-1.png" />).exact()): <span class="skw">doubleClick</span>(Pattern(<img src="me_indicator_1-1.png" />).exact()); <span class="skw">wait</span>(<img src="allboards.png" />)
+    <span class="kw">if</span> boardDict.has_key(my_board):
+        <span class="cmt">#select board</span>
+        myboardimg = boardDict.get(my_board)
+        <span class="skw">find</span>(Pattern(myboardimg).exact()); <span class="skw">click</span>(Pattern(myboardimg).exact())
+        myselectedimg = boardSelectedDict.get(my_board)
+        <span class="skw">wait</span>(Pattern(myselectedimg).exact())
+        <span class="kw">if</span> my_tab.lower() == <span class="str">'mux'</span> <span class="kw">or</span> my_tab.lower() == <span class="str">'processing'</span>:
+            <span class="skw">doubleClick</span>(Pattern(myselectedimg).exact())
+    <span class="kw">else</span>:
+        Exit_program(<span class="str">'Invalid board range provided outside of (1..4): '</span> + my_board, <span class="dig">2</span>)
+
+<span class="kw">def</span> Nav_Ports():
+    <span class="kw">if</span> my_tab.lower() == <span class="str">'mux'</span>:
+        <span class="cmt">#select port</span>
+        <span class="kw">if</span> ethPortDict.has_key(eth_port):
+            <span class="cmt">#find and click on the correct port</span>
+            Check_arg(<span class="str">'ethPortType'</span>)
+            my_eth_type = Get_arg(<span class="str">'ethPortType'</span>)
+            <span class="kw">if</span> my_eth_type.lower() == <span class="str">'in'</span>:
+                eth_input_offset = -<span class="dig">8</span>
+            <span class="kw">elif</span> my_eth_type.lower() == <span class="str">'out'</span>:
+                eth_input_offset = <span class="dig">10</span>
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Invalid ethPortType entered not in range [in/out]: '</span> + eth_input_offset, <span class="dig">2</span>)
+
+            myethimg = ethPortDict.get(eth_port)
+            <span class="skw">find</span>(Pattern(myethimg).exact())
+            <span class="kw">if</span> clicktype == <span class="str">'1'</span>:
+                <span class="skw">click</span>(Pattern(myethimg).exact().targetOffset(<span class="dig">0</span>,eth_input_offset)); <span class="skw">wait</span>(<img src="create_input_icons.png" />)
+            <span class="kw">elif</span> clicktype == <span class="str">'2'</span>:
+                <span class="skw">doubleClick</span>(Pattern(myethimg).exact().targetOffset(<span class="dig">0</span>,eth_input_offset)); <span class="skw">wait</span>(<img src="create_input_icons.png" />)
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Invalid portClick entered not in range [1..2]: '</span> + clicktype, <span class="dig">2</span>)
+            <span class="kw">if</span> exists(<img src="create_input_icons.png" />):
+                Print_debug(<span class="str">'Selected eth port: '</span> + eth_port)
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Failed to select eth port: '</span> + eth_port)
+        <span class="kw">else</span>:
+            Exit_program(<span class="str">'Invalid ethernet port: '</span> + eth_port, <span class="dig">2</span>)
+    <span class="kw">elif</span> my_tab.lower() == <span class="str">'processing'</span> <span class="kw">or</span> my_tab.lower() == <span class="str">'groups'</span>:
+        <span class="kw">if</span> boardSelectedDict.has_key(my_board):
+            myboardimg = boardSelectedDict.get(my_board)
+            eth_input_offset = int(my_port)*<span class="dig">18</span>
+            <span class="skw">find</span>(Pattern(myboardimg).exact())
+            <span class="kw">if</span> clicktype == <span class="str">'1'</span>:
+                <span class="skw">click</span>(Pattern(myboardimg).exact().targetOffset(<span class="dig">0</span>,eth_input_offset))
+            <span class="kw">elif</span> clicktype == <span class="str">'2'</span>:
+                <span class="skw">doubleClick</span>(Pattern(myboardimg).exact().targetOffset(<span class="dig">0</span>,eth_input_offset))
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'Invalid portClick entered not in range [1..2]: '</span> + clicktype, <span class="dig">2</span>)
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Nav_Boards()
+Nav_Ports()
+</pre>
+</body>
+</html>

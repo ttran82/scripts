@@ -1,0 +1,129 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>delete_input_muxes.sikuli</h2> <a href="delete_input_muxes.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+<span class="cmt">#This script assume that the Java GUI is already running.</span>
+<span class="cmt">#This script is meant to run after nav_ports assuming the right boards and port is already select</span>
+<span class="cmt">#This script will run delete the input mux base on muxName</span>
+<span class="cmt">#Input: muxName = [InputMux001 .. InputMux100] If muxName is not given, it will delete the first input mux in the list</span>
+<span class="cmt">#Input: muxPosition = [1..] will delete the input mux base on its position on the list.  If set to all, it will delete all input muxes</span>
+<span class="cmt">#Usage: delete_input_mux.sikuli muxName=InputMux1 muxAddr=2xx.xxx.xx.x muxPort=xxxx bulkNum=10 octetIncrement=1</span>
+
+<span class="cmt">###############################################################</span>
+<span class="cmt">#common code for every sikuli code.  Do not remove this section</span>
+<span class="kw">from</span> me7klib <span class="kw">import</span> *
+<span class="cmt">###############################################################</span>
+
+<span class="cmt">#YOUR code start here</span>
+<span class="cmt">###############################################################</span>
+<span class="cmt">#This is your check for the inputs that you are expecting.</span>
+<span class="kw">def</span> Check_args():
+    <span class="cmt">#checking for required arguments</span>
+    <span class="kw">pass</span>
+
+Check_args()
+
+<span class="cmt">############################################################</span>
+<span class="cmt">#Main program definitions code start from this point</span>
+<span class="cmt">#Any global variables here  </span>
+mymux = Get_arg(<span class="str">'muxName'</span>)
+mypos = Get_arg(<span class="str">'muxPosition'</span>)
+
+inputmuxNameDict = {
+    <span class="str">'InputMux001'</span>:<img src="nputMux0O1_selected-1.png" />, <span class="str">'InputMux002'</span>:<img src="InputMux0O2_selected-1.png" />, <span class="str">'InputMux003'</span>:<img src="lnputMuxOO3_selected.png" />, <span class="str">'InputMux004'</span>:<img src="lnputMuxOO4_selected.png" />, <span class="str">'InputMux005'</span>:<img src="nputMux005_selected.png" />,
+    <span class="str">'InputMux006'</span>:<img src="nputMux006_selected-1.png" />, <span class="str">'InputMux007'</span>:<img src="nputMux0O7_selected.png" />, <span class="str">'InputMux008'</span>:<img src="noutMux0O8_selected.png" />, <span class="str">'InputMux009'</span>:<img src="nputMux0O9_selected.png" />, <span class="str">'InputMux010'</span>:<img src="nputMux010_selected.png" />,
+    <span class="str">'InputMux_1'</span>:<img src="lnputMux_1_selected-1.png" />, <span class="str">'InputMux_2'</span>:<img src="InputMux2_selected.png" />, <span class="str">'InputMux_3'</span>:<img src="InputMux3_selected.png" />, <span class="str">'InputMux_4'</span>:<img src="InputMux4_selected.png" />, <span class="str">'InputMux_5'</span>:<img src="InputMux5_selected.png" />,
+    <span class="str">'InputMux_6'</span>:<img src="InputMux6_selected.png" />, <span class="str">'InputMux_7'</span>:<img src="InputMux7_selected.png" />, <span class="str">'InputMux_8'</span>:<img src="InputMux8_selected.png" />, <span class="str">'InputMux_9'</span>:<img src="lnputMux_9_selected.png" />, <span class="str">'InputMux_10'</span>:<img src="lnputMux_10_selected.png" />
+    }
+
+<span class="kw">def</span> Delete_By_Name():
+    <span class="kw">if</span> mymux:
+        <span class="skw">find</span>(<img src="Input_mux_list_header.png" />)
+        <span class="kw">if</span> inputmuxNameDict.has_key(mymux):
+            mymuximage = inputmuxNameDict.get(mymux)
+            <span class="kw">if</span> exists(Pattern(mymuximage).exact()):
+                <span class="skw">rightClick</span>(Pattern(mymuximage).exact()); <span class="skw">wait</span>(<img src="DeleteDelete_popup.png" />); <span class="skw">click</span>(Pattern(<img src="DeleteDelete_popup.png" />).targetOffset(-<span class="dig">36</span>,-<span class="dig">13</span>))
+                <span class="cmt">#Now apply</span>
+                <span class="kw">if</span> exists(<img src="mbr_warning.png" />): <span class="skw">find</span>(<img src="delete_yes_no.png" />); <span class="skw">click</span>(Pattern(<img src="delete_yes_no.png" />).targetOffset(-<span class="dig">25</span>,<span class="dig">0</span>))
+                RunSikuli(apply_changes)
+
+            <span class="kw">else</span>:
+                Exit_program(<span class="str">'muxName not found: '</span> + mymux, <span class="dig">2</span>)
+        <span class="kw">else</span>:
+            Exit_program(<span class="str">'Invalid muxName entered: '</span> + mymux, <span class="dig">2</span>)
+
+
+<span class="cmt">#######################################################</span>
+<span class="cmt">#Main program flow</span>
+Delete_By_Name()
+</pre>
+</body>
+</html>
