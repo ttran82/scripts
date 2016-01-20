@@ -1,3 +1,0 @@
-sub mega
-
-sub super 
