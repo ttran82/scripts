@@ -1,0 +1,28 @@
+<?php
+  $phpdir = $_SERVER['DOCUMENT_ROOT'] . "/php";
+  require("${phpdir}/template/top.inc");
+  require("${phpdir}/template/includes.inc");
+  navDefine("main", "/nav_main.inc", "current", "web_info");
+  crumbSet("Info");
+?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title><?php echo crumbGet(); ?></title>
+<?php require("${phpdir}/template/head.inc"); ?>
+</head>
+<body>
+<?php require("${phpdir}/template/body.inc"); ?>
+<p></p>
+<ul>
+<pre>
+<?php 
+  print "Server Info:\n";
+  print_r($_SERVER);
+  print "Env Info:\n";
+  print_r($_ENV);
+?>
+</pre>
+</ul>
+<?php require("${phpdir}/template/foot.inc"); ?>
+</body>
+</html>
